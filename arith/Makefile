@@ -60,7 +60,7 @@ all: ppmdiff 40image
 
 
 ## Linking step (.o -> executable program)
-testSteps: Test.o compress40.o uarray2.o a2plain.o
+testSteps: Test.o compress40.o uarray2.o a2plain.o trimStep.o
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 40image: 40image.o

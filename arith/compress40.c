@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <pnm.h>
+#include <a2methods.h>
+#include <a2plain.h>
 #include "CompressionStep.h"
 
 
@@ -25,7 +28,7 @@ void decompress40(FILE *input)
 
 void compress40Output(FILE *input, FILE *output) 
 {
-        Pnm_ppm image = Pnm_ppmrdr(input);
+        Pnm_ppm image = Pnm_ppmread(input, uarray2_methods_plain);
         for (size_t step = 0; step < numSteps; step++) {
                 ordering[step] -> compress(image);
         }

@@ -15,7 +15,6 @@ void compress(Pnm_ppm image)
         int width  = image -> width;
         int height = image -> height;
         if (width % 2 == 0 && height % 2 == 0) {
-                fprintf(stdout, "This is even\n");
                 return;
         }
 

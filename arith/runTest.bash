@@ -28,14 +28,16 @@ for image in "${IMAGES[@]}"; do
         
         djpeg $IMAGE_PATH$image.jpg > $OUTPUT_PATH$image.out
         
-        echo $image 
-        echo JPEG self compare
+        echo $image
+        echo "---------------------"
+
+        echo JPEG vs Original
         jpegSelfCompare $OUTPUT_PATH$image.out
 
-        echo COMP40 self compare
+        echo Our Implementation vs Original
         comp40SelfCompare $OUTPUT_PATH$image.out
 
-        echo JPEG vs COMP40 compare
+        echo JPEG vs Our Implementation
         jpegComp40Compare $OUTPUT_PATH$image.out
 
         echo 

@@ -7,7 +7,7 @@
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
 
-static void trimStep_copyIntoNew(int col, int row, A2Methods_UArray2 uarray2, 
+static void copyIntoNew(int col, int row, A2Methods_UArray2 uarray2, 
                                  A2Methods_Object *ptr, void *cl);
 
 /*
@@ -37,7 +37,7 @@ static void compress(Pnm_ppm image)
         int               size     = methods -> size(pixels);
         A2Methods_UArray2 newImage = methods -> new(width, height, size);
         
-        methods -> map_row_major(newImage, trimStep_copyIntoNew, pixels);
+        methods -> map_row_major(newImage, copyIntoNew, pixels);
         methods -> free(&pixels);
         
         image -> pixels = newImage;
@@ -46,7 +46,7 @@ static void compress(Pnm_ppm image)
 }
 
 /*
- *  Name      : trimStep_copyIntoNew
+ *  Name      : copyIntoNew
  *  Purpose   : Copy the old image data into the new image data
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
@@ -57,7 +57,7 @@ static void compress(Pnm_ppm image)
  *  Notes     : Excludes information that is not in the new image 
  *              (ie the trimmed columns/rows will be excluded)
  */
-static void trimStep_copyIntoNew(int col, int row, A2Methods_UArray2 uarray2, 
+static void copyIntoNew(int col, int row, A2Methods_UArray2 uarray2, 
                                  A2Methods_Object *ptr, void *cl)
 {
         A2Methods_T       methods       = uarray2_methods_plain;

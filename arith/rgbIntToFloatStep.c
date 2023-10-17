@@ -1,16 +1,31 @@
 #include <pnm.h>
 #include <a2plain.h>
 #include "CompressionStep.h"
+#include <a2methods.h>  
 
 #include <stdio.h>
+
+#define toIntDenominator 255
 
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
 
-// static void toFloat(int col, int row, A2Methods_UArray2 uarray2, 
-//                     A2Methods_Object *ptr, void *cl);
-// static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
-//                   A2Methods_Object *ptr, void *cl);
+static void toFloat(int col, int row, A2Methods_UArray2 uarray2, 
+                    A2Methods_Object *ptr, void *cl);
+static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
+                  A2Methods_Object *ptr, void *cl);
+
+typedef struct RgbIntToFloatStep_intImage {
+        A2Methods_UArray2 pixels;
+        int denominator;
+} RgbIntToFloatStep_intImage;
+
+typedef struct Rgb_float {
+        float red;
+        float green;
+        float blue;
+} *Rgb_float;
+
 /*
  *  Name      : compress
  *  Purpose   : Trim the edges to make the dimensions even by even
@@ -21,32 +36,48 @@ static void decompress(Pnm_ppm image);
  *              Will CRE if can not allocate new memory to create the new
  *              trimmed image (if necessary)
  */
+#include <stdio.h>
 static void compress(Pnm_ppm image)
 {
-        (void) image;
-        // int width  = image -> width;
-        // int height = image -> height;
-        // if (width % 2 == 0 && height % 2 == 0) {
-        //         return;
-        // }
+        int width  = image -> width;
+        int height = image -> height;
 
-        // A2Methods_T methods = uarray2_methods_plain;
+        A2Methods_T methods = uarray2_methods_plain;
+
+        A2Methods_UArray2 pixels      = image -> pixels;
+        int               size        = sizeof(struct Rgb_float);
+        int               denominator = image -> denominator;
+        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
         
-        // /* Get the even width and height */
-        // width  = width  - (width  % 2);
-        // height = height - (height % 2);
-        // A2Methods_UArray2 pixels   = image -> pixels;
-        // int               size     = methods -> size(pixels);
-        // A2Methods_UArray2 newImage = methods -> new(width, height, size);
+        RgbIntToFloatStep_intImage imageToFloat = {
+                pixels,
+                denominator
+        };
+
+        methods -> map_row_major(newImage, toFloat, &imageToFloat);
+        methods -> free(&pixels);
         
-        // methods -> map_row_major(newImage, trimStep_copyIntoNew, pixels);
-        // methods -> free(&pixels);
-        
-        // image -> pixels = newImage;
-        // image -> width  = width;
-        // image -> height = height;
+        image -> pixels = newImage;
 }
+static void toFloat(int col, int row, A2Methods_UArray2 uarray2, 
+                    A2Methods_Object *ptr, void *cl)
+{
 
+        A2Methods_T                 methods      = uarray2_methods_plain;
+        RgbIntToFloatStep_intImage *imageToFloat = cl;
+        A2Methods_UArray2           pixels       = imageToFloat -> pixels;
+        int                         denominator  = imageToFloat -> denominator;
+        Pnm_rgb                     data         = methods -> at(pixels, 
+                                                                 col, row);
+        Rgb_float                   inNewImage   = ptr;
+        struct Rgb_float newPixel = {
+                1.0 * (data -> red)   / denominator,
+                1.0 * (data -> green) / denominator,
+                1.0 * (data -> blue)  / denominator
+        };
+        *inNewImage = newPixel;
+        (void) uarray2;
+}
 
 
 /*
@@ -58,7 +89,35 @@ static void compress(Pnm_ppm image)
  */
 static void decompress(Pnm_ppm image)
 {
-        (void) image;
+        int width  = image -> width;
+        int height = image -> height;
+
+        A2Methods_T methods = uarray2_methods_plain;
+
+        A2Methods_UArray2 pixels      = image -> pixels;
+        int               size        = sizeof(struct Pnm_rgb);
+        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+
+        methods -> map_row_major(newImage, toInt, pixels);
+        methods -> free(&pixels);
+        
+        image -> pixels = newImage;
+}
+static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
+                  A2Methods_Object *ptr, void *cl)
+{
+        A2Methods_T       methods     = uarray2_methods_plain;
+        A2Methods_UArray2 pixels      = cl;
+        Rgb_float         data        = methods -> at(pixels, col, row);
+        Pnm_rgb           inNewImage  = ptr;
+
+        struct Pnm_rgb newPixel = {
+                (int)((data -> red)   * toIntDenominator),
+                (int)((data -> green) * toIntDenominator),
+                (int)((data -> blue)  * toIntDenominator)
+        };
+        *inNewImage = newPixel;
+        (void) uarray2;
 }
 
 static struct CompressionStep rgbIntToFloatStruct = {
@@ -67,3 +126,5 @@ static struct CompressionStep rgbIntToFloatStruct = {
 };
 
 CompressionStep rgbIntToFloatStep = &rgbIntToFloatStruct;
+
+#undef toIntDenominator

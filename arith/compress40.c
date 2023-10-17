@@ -6,6 +6,20 @@
 
 #include "CompressionStep.h"
 #include "trimStep.h"
+#include "rgbIntToFloatStep.h"
+
+
+void compress40(FILE *input);
+void decompress40(FILE *input);
+
+void compress40Output(FILE *input, FILE *output);
+void decompress40Output(FILE *input, FILE *output);
+
+void compress40Image(Pnm_ppm image);
+void decompress40Image(Pnm_ppm image);
+
+/* Steps in order of compression */
+#define stepOrder {trimStep, rgbIntToFloatStep}
 
 /*
  *  Name      : compress40
@@ -14,7 +28,11 @@
  *  Output    : (None)
  *  Notes     : Assumes that the file is open
  */
-void compress40(FILE *input);
+void compress40(FILE *input)
+{
+        compress40Output(input, stdout);
+}
+
 /*
  *  Name      : decompress40
  *  Purpose   : Take the compressed image and prints the 
@@ -23,7 +41,10 @@ void compress40(FILE *input);
  *  Output    : (None)
  *  Notes     : Assumes that the file is open
  */
-void decompress40(FILE *input);
+void decompress40(FILE *input)
+{
+        decompress40Output(input, stdout);
+}
 
 /*
  *  Name      : compress40Output
@@ -33,7 +54,15 @@ void decompress40(FILE *input);
  *  Output    : (None)
  *  Notes     : Assumes that the file is open
  */
-void compress40Output(FILE *input, FILE *output);
+void compress40Output(FILE *input, FILE *output) 
+{
+        assert(input != NULL && output != NULL);
+        Pnm_ppm image = Pnm_ppmread(input, uarray2_methods_plain);
+        compress40Image(image);
+        // TODO: use the compressed writer
+        Pnm_ppmfree(&image);
+}
+
 /*
  *  Name      : decompress40Output
  *  Purpose   : Take the compressed image and print the 
@@ -43,45 +72,6 @@ void compress40Output(FILE *input, FILE *output);
  *  Output    : (None)
  *  Notes     : Assumes that the file is open
  */
-void decompress40Output(FILE *input, FILE *output);
-
-/*
- *  Name      : compress40Image
- *  Purpose   : Takes an image and compresses it in-place
- *  Parameters: (Pnm_ppm) image = The image to compress
- *  Output    : (None)
- *  Notes     : Assumes that the Pnm_ppm is valid
- */
-void compress40Image(Pnm_ppm image);
-/*
- *  Name      : decompress40Image
- *  Purpose   : Takes an image and decompresses it in-place
- *  Parameters: (Pnm_ppm) image = The image to decompress
- *  Output    : (None)
- *  Notes     : Assumes that the Pnm_ppm is valid
- */
-void decompress40Image(Pnm_ppm image);
-
-/* Steps in order of compression */
-#define stepOrder {trimStep}
-
-void compress40(FILE *input)
-{
-        compress40Output(input, stdout);
-}
-void decompress40(FILE *input)
-{
-        decompress40Output(input, stdout);
-}
-
-void compress40Output(FILE *input, FILE *output) 
-{
-        assert(input != NULL && output != NULL);
-        Pnm_ppm image = Pnm_ppmread(input, uarray2_methods_plain);
-        compress40Image(image);
-        // TODO: use the compressed writer
-        Pnm_ppmfree(&image);
-}
 void decompress40Output(FILE *input, FILE *output)
 {
         assert(input != NULL && output != NULL);
@@ -90,6 +80,13 @@ void decompress40Output(FILE *input, FILE *output)
         (void) output;
 }
 
+/*
+ *  Name      : compress40Image
+ *  Purpose   : Takes an image and compresses it in-place
+ *  Parameters: (Pnm_ppm) image = The image to compress
+ *  Output    : (None)
+ *  Notes     : Assumes that the Pnm_ppm is valid
+ */
 void compress40Image(Pnm_ppm image)
 {
         CompressionStep ordering[] = stepOrder;
@@ -98,6 +95,14 @@ void compress40Image(Pnm_ppm image)
                 ordering[step] -> compress(image);
         }
 }
+
+/*
+ *  Name      : decompress40Image
+ *  Purpose   : Takes an image and decompresses it in-place
+ *  Parameters: (Pnm_ppm) image = The image to decompress
+ *  Output    : (None)
+ *  Notes     : Assumes that the Pnm_ppm is valid
+ */
 void decompress40Image(Pnm_ppm image)
 {
         CompressionStep ordering[] = stepOrder;
@@ -108,4 +113,3 @@ void decompress40Image(Pnm_ppm image)
 }
 
 #undef ordering 
-#undef numSteps

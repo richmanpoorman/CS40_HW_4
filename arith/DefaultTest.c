@@ -9,9 +9,10 @@
 void test(FILE *input, FILE *output)
 {
         Pnm_ppm image = Pnm_ppmread(input, uarray2_methods_plain);
-        
+
         compress40Image(image);
         decompress40Image(image);
+
         Pnm_ppmwrite(output, image);
         Pnm_ppmfree(&image);
 }

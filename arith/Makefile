@@ -47,7 +47,8 @@ LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt
 # dependency list.
 INCLUDES = $(shell echo *.h)
 
-COMPRESSION_FILES = compress40.o uarray2.o a2plain.o trimStep.o
+COMPRESSION_FILES = compress40.o uarray2.o a2plain.o trimStep.o \
+	rgbIntToFloatStep.o
 
 ############### Rules ###############
 
@@ -62,7 +63,7 @@ all: ppmdiff 40image
 
 
 ## Linking step (.o -> executable program)
-testSteps: Test.o $(COMPRESSION_FILES)
+testSteps: DefaultTest.o $(COMPRESSION_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 40image: 40image.o $(COMPRESSION_FILES)

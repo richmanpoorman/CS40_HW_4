@@ -1,8 +1,12 @@
  #! /bin/sh
 
-IMAGE_PATH="/comp/40/bin/images/"
+IMAGE_PATH="Test/InputFiles/"
+# Removed Tests:
+# "empty" "one_by_one" "singlePixel" "verticalLongBar" "horizontalLongBar"
 IMAGES=("flowers" "animals" "desert" "erosion" "from-wind-cave" \
-        "halligan") 
+        "halligan"  "twoByTwo" \
+        "nOddMEven" "nOddMOdd"  "nEvenMEven" "nEvenMOdd" \
+        ) 
 OUTPUT_PATH="Test/OutputFiles/"
 
 
@@ -11,7 +15,9 @@ jpegSelfCompare() {
 }
 
 comp40SelfCompare() {
-        ./testSteps $1 | ./ppmdiff $1 -
+        touch $OUTPUT_PATH$imageOutput.ppm
+        ./testSteps $1 > $OUTPUT_PATH$imageOutput.ppm
+        ./ppmdiff $1 $OUTPUT_PATH$imageOutput.ppm
 }
 
 jpegComp40Compare() {
@@ -26,7 +32,7 @@ jpegComp40Compare() {
 
 for image in "${IMAGES[@]}"; do
         
-        djpeg $IMAGE_PATH$image.jpg > $OUTPUT_PATH$image.out
+        cat $IMAGE_PATH$image.ppm > $OUTPUT_PATH$image.out
         
         echo $image
         echo "---------------------"

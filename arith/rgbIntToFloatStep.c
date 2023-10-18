@@ -47,6 +47,7 @@ static void compress(Pnm_ppm image)
 /*
  *  Name      : toFloat
  *  Purpose   : Copy the old image data into the new image data
+ *              going from RGB int to RGB float
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
@@ -80,10 +81,11 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
 /*
  *  Name      : decompress
  *  Purpose   : Turns the pixels from Rgb_float to Pnm_rgb
+ *              going from RGB float to RGB int
  *  Parameters: (Pnm_ppm) image = The original image convert format
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
- *              values being Pnm_rgb structs (no way to check :( );
+ *              values being Rgb_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory
  */
 static void decompress(Pnm_ppm image)

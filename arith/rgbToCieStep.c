@@ -36,11 +36,11 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : compress
- *  Purpose   : Trim the edges to make the dimensions even by even
+ *  Purpose   : Turn the RGB float image into a CIE float image
  *  Parameters: (Pnm_ppm) image = The original image to trim
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
- *              values being Pnm_rgb structs (no way to check :( );
+ *              values being Rgb_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
  *              trimmed image (if necessary)
  */
@@ -64,6 +64,7 @@ static void compress(Pnm_ppm image)
 /*
  *  Name      : toCie
  *  Purpose   : Copy the old image data into the new image data
+ *              going from RGB float to CIE float
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
@@ -96,10 +97,13 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : decompress
- *  Purpose   : Do nothing on the image (no way to get trimmed back)
+ *  Purpose   : Turn the CIE float image into a RGB float image
  *  Parameters: (Pnm_ppm) image = The original image to trim
  *  Output    : (None)
- *  Notes     : Does nothing (just to fit into struct well)
+ *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
+ *              values being Cie_float structs (no way to check :( );
+ *              Will CRE if can not allocate new memory to create the new
+ *              trimmed image (if necessary)
  */
 static void decompress(Pnm_ppm image)
 {
@@ -120,16 +124,15 @@ static void decompress(Pnm_ppm image)
 
 /*
  *  Name      : toFloat
- *  Purpose   : Copy the old image data into the new image data
+ *  Purpose   : Copy the old image data into the new image data 
+ *              going from CIE float to RGB float
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
  *              (A2Methods_Object *) ptr     = The RGB value in the new array
- *              (void *)             cl      = The array with RGB floats
+ *              (void *)             cl      = The CIE float image
  *  Output    : (None)
- *  Notes     : Converts the RGB values of floats to RGB values of ints
- *              Uses the global variable toIntDenominator as the new 
- *              denominator
+ *  Notes     : Converts the CIE float to RGB float
  */
 static void toRgb(int col, int row, A2Methods_UArray2 uarray2, 
                   A2Methods_Object *ptr, void *cl)

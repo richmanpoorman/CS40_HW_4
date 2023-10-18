@@ -2,7 +2,7 @@
 #include <a2plain.h>
 #include "CompressionStep.h"
 #include <a2methods.h>  
-
+#include "PixelStructs.h"
 #include <stdio.h>
 
 #define toIntDenominator 255
@@ -15,26 +15,15 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
 static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
                   A2Methods_Object *ptr, void *cl);
 
-typedef struct RgbIntToFloatStep_intImage {
-        A2Methods_UArray2 pixels;
-        int denominator;
-} RgbIntToFloatStep_intImage;
-
-typedef struct Rgb_float {
-        float red;
-        float green;
-        float blue;
-} *Rgb_float;
 
 /*
  *  Name      : compress
- *  Purpose   : Trim the edges to make the dimensions even by even
- *  Parameters: (Pnm_ppm) image = The original image to trim
+ *  Purpose   : Turns the pixels from Pnm_rgb to Rgb_float
+ *  Parameters: (Pnm_ppm) image = The original image convert format
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Pnm_rgb structs (no way to check :( );
- *              Will CRE if can not allocate new memory to create the new
- *              trimmed image (if necessary)
+ *              Will CRE if can not allocate new memory
  */
 static void compress(Pnm_ppm image)
 {
@@ -45,15 +34,10 @@ static void compress(Pnm_ppm image)
 
         A2Methods_UArray2 pixels      = image -> pixels;
         int               size        = sizeof(struct Rgb_float);
-        int               denominator = image -> denominator;
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
         
-        RgbIntToFloatStep_intImage imageToFloat = {
-                pixels,
-                denominator
-        };
 
-        methods -> map_row_major(newImage, toFloat, &imageToFloat);
+        methods -> map_row_major(newImage, toFloat, image);
         methods -> free(&pixels);
         
         image -> pixels      = newImage;
@@ -77,13 +61,12 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
                     A2Methods_Object *ptr, void *cl)
 {
 
-        A2Methods_T                 methods      = uarray2_methods_plain;
-        RgbIntToFloatStep_intImage *imageToFloat = cl;
-        A2Methods_UArray2           pixels       = imageToFloat -> pixels;
-        int                         denominator  = imageToFloat -> denominator;
-        Pnm_rgb                     data         = methods -> at(pixels, 
-                                                                 col, row);
-        Rgb_float                   inNewImage   = ptr;
+        A2Methods_T       methods     = uarray2_methods_plain;
+        Pnm_ppm           image       = cl;
+        A2Methods_UArray2 pixels      = image -> pixels;
+        int               denominator = image -> denominator;
+        Pnm_rgb           data        = methods -> at(pixels, col, row);
+        Rgb_float         inNewImage  = ptr;
         struct Rgb_float newPixel = {
                 1.0 * (data -> red)   / denominator,
                 1.0 * (data -> green) / denominator,
@@ -96,10 +79,12 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : decompress
- *  Purpose   : Do nothing on the image (no way to get trimmed back)
- *  Parameters: (Pnm_ppm) image = The original image to trim
+ *  Purpose   : Turns the pixels from Rgb_float to Pnm_rgb
+ *  Parameters: (Pnm_ppm) image = The original image convert format
  *  Output    : (None)
- *  Notes     : Does nothing (just to fit into struct well)
+ *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
+ *              values being Pnm_rgb structs (no way to check :( );
+ *              Will CRE if can not allocate new memory
  */
 static void decompress(Pnm_ppm image)
 {
@@ -120,7 +105,7 @@ static void decompress(Pnm_ppm image)
 }
 
 /*
- *  Name      : toFloat
+ *  Name      : toInt
  *  Purpose   : Copy the old image data into the new image data
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy

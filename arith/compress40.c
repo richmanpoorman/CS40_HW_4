@@ -5,8 +5,10 @@
 #include <assert.h>
 
 #include "CompressionStep.h"
+
 #include "trimStep.h"
 #include "rgbIntToFloatStep.h"
+#include "rgbToCieStep.h"
 
 
 void compress40(FILE *input);
@@ -19,7 +21,7 @@ void compress40Image(Pnm_ppm image);
 void decompress40Image(Pnm_ppm image);
 
 /* Steps in order of compression */
-#define stepOrder {trimStep, rgbIntToFloatStep}
+#define stepOrder {trimStep, rgbIntToFloatStep, rgbToCieStep}
 
 /*
  *  Name      : compress40

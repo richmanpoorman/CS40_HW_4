@@ -3,9 +3,12 @@
 IMAGE_PATH="Test/InputFiles/"
 # Removed Tests:
 # "empty" "one_by_one" "singlePixel" "verticalLongBar" "horizontalLongBar"
+# "mobo"
 IMAGES=("flowers" "animals" "desert" "erosion" "from-wind-cave" \
         "halligan"  "twoByTwo" \
         "nOddMEven" "nOddMOdd"  "nEvenMEven" "nEvenMOdd" \
+        "blackSquare" "whiteSquare" "redSquare" "greenSquare" "blueSquare" \
+        "colorBar" "evilDitherTest" "gradient" \
         ) 
 OUTPUT_PATH="Test/OutputFiles/"
 
@@ -16,7 +19,7 @@ jpegSelfCompare() {
 
 comp40SelfCompare() {
         touch $OUTPUT_PATH$imageOutput.ppm
-        ./testSteps $1 > $OUTPUT_PATH$imageOutput.ppm
+        valgrind ./testSteps $1 > $OUTPUT_PATH$imageOutput.ppm
         ./ppmdiff $1 $OUTPUT_PATH$imageOutput.ppm
 }
 

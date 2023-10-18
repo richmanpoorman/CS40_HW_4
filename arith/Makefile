@@ -48,7 +48,7 @@ LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt
 INCLUDES = $(shell echo *.h)
 
 COMPRESSION_FILES = compress40.o uarray2.o a2plain.o trimStep.o \
-	rgbIntToFloatStep.o
+	rgbIntToFloatStep.o rgbToCieStep.o
 
 ############### Rules ###############
 

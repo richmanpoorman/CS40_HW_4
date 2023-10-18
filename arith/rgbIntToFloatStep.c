@@ -36,7 +36,6 @@ typedef struct Rgb_float {
  *              Will CRE if can not allocate new memory to create the new
  *              trimmed image (if necessary)
  */
-#include <stdio.h>
 static void compress(Pnm_ppm image)
 {
         int width  = image -> width;
@@ -57,8 +56,23 @@ static void compress(Pnm_ppm image)
         methods -> map_row_major(newImage, toFloat, &imageToFloat);
         methods -> free(&pixels);
         
-        image -> pixels = newImage;
+        image -> pixels      = newImage;
+        image -> denominator = 1;
 }
+
+/*
+ *  Name      : toFloat
+ *  Purpose   : Copy the old image data into the new image data
+ *  Parameters: (int)                col     = The current column to copy
+ *              (int)                row     = The current row to copy
+ *              (A2Methods_UArray2)  uarray2 = The new array to copy into
+ *              (A2Methods_Object *) ptr     = The RGB value in the new array
+ *              (void *)             cl      = The package of the array with 
+ *                                             RGB ints along with the 
+ *                                             denominator
+ *  Output    : (None)
+ *  Notes     : Converts the RGB values of ints to RGB values of floats
+ */
 static void toFloat(int col, int row, A2Methods_UArray2 uarray2, 
                     A2Methods_Object *ptr, void *cl)
 {
@@ -101,8 +115,23 @@ static void decompress(Pnm_ppm image)
         methods -> map_row_major(newImage, toInt, pixels);
         methods -> free(&pixels);
         
-        image -> pixels = newImage;
+        image -> pixels      = newImage;
+        image -> denominator = toIntDenominator;
 }
+
+/*
+ *  Name      : toFloat
+ *  Purpose   : Copy the old image data into the new image data
+ *  Parameters: (int)                col     = The current column to copy
+ *              (int)                row     = The current row to copy
+ *              (A2Methods_UArray2)  uarray2 = The new array to copy into
+ *              (A2Methods_Object *) ptr     = The RGB value in the new array
+ *              (void *)             cl      = The array with RGB floats
+ *  Output    : (None)
+ *  Notes     : Converts the RGB values of floats to RGB values of ints
+ *              Uses the global variable toIntDenominator as the new 
+ *              denominator
+ */
 static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
                   A2Methods_Object *ptr, void *cl)
 {

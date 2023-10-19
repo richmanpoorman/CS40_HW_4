@@ -16,8 +16,8 @@ static void toInt(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : compress
- *  Purpose   : Turns the pixels from Pnm_rgb to Rgb_float
- *  Parameters: (Pnm_ppm) image = The original image convert format
+ *  Purpose   : Turns the pixels from Cie_float to Dct_float
+ *  Parameters: (Pnm_ppm) image = Image with Cie_floats as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Pnm_rgb structs (no way to check :( );
@@ -28,11 +28,15 @@ static void compress(Pnm_ppm image)
         int width  = image -> width;
         int height = image -> height;
 
+        int newWidth  = width / 2;
+        int newHeight = height / 2;
+
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
-        int               size        = sizeof(struct Rgb_float);
-        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        int               size        = sizeof(struct Dct_float);
+        A2Methods_UArray2 newImage    = methods -> new(newWidth, 
+                                                       newHeight, size);
         
 
         methods -> map_row_major(newImage, toFloat, image);

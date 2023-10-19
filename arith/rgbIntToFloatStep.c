@@ -18,8 +18,8 @@ static void toInt(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : compress
- *  Purpose   : Turns the pixels from Pnm_rgb to Rgb_float
- *  Parameters: (Pnm_ppm) image = The original image convert format
+ *  Purpose   : Converts the pixels from Pnm_rgb to Rgb_float
+ *  Parameters: (Pnm_ppm) image = Image with Pnm_rgb as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Pnm_rgb structs (no way to check :( );
@@ -82,7 +82,7 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
  *  Name      : decompress
  *  Purpose   : Turns the pixels from Rgb_float to Pnm_rgb
  *              going from RGB float to RGB int
- *  Parameters: (Pnm_ppm) image = The original image convert format
+ *  Parameters: (Pnm_ppm) image = Image with Rgb_floats as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Rgb_float structs (no way to check :( );

@@ -55,7 +55,7 @@ static void compress(Pnm_ppm image)
  *              (void *)             cl      = The old pixel array to copy from
  *  Output    : (None)
  *  Notes     : Excludes information that is not in the new image 
- *              (ie the trimmed columns/rows will be excluded)
+ *              (i.e. the trimmed columns/rows will be excluded)
  */
 static void copyIntoNew(int col, int row, A2Methods_UArray2 uarray2, 
                                  A2Methods_Object *ptr, void *cl)

@@ -36,8 +36,8 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : compress
- *  Purpose   : Turn the RGB float image into a CIE float image
- *  Parameters: (Pnm_ppm) image = The original image to trim
+ *  Purpose   : Convert the RGB float image into a CIE float image
+ *  Parameters: (Pnm_ppm) image = Image with Rgb_floats as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Rgb_float structs (no way to check :( );
@@ -98,7 +98,7 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
 /*
  *  Name      : decompress
  *  Purpose   : Turn the CIE float image into a RGB float image
- *  Parameters: (Pnm_ppm) image = The original image to trim
+ *  Parameters: (Pnm_ppm) image = Image with Cie_floats as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Cie_float structs (no way to check :( );

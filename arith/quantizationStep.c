@@ -4,6 +4,11 @@
 #include <a2methods.h>  
 #include "PixelStructs.h"
 #include <stdio.h>
+#include <arith40.h>
+
+#define maxInt 15
+#define maxFloat 0.3
+#define scaleFactor maxInt / maxFloat
 
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
@@ -13,16 +18,16 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
 static void dequantize(int col, int row, A2Methods_UArray2 uarray2, 
                        A2Methods_Object *ptr, void *cl);
 
-static unsigned yToBits(float y);
+static signed yToBits(float y);
 static float    yToFloat(unsigned y);
 
 /*
  *  Name      : compress
- *  Purpose   : Turn the RGB float image into a CIE float image
- *  Parameters: (Pnm_ppm) image = The original image to trim
+ *  Purpose   : Convert the DCT float image into a DCT int image
+ *  Parameters: (Pnm_ppm) image = Image with Dct_floats as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
- *              values being Rgb_float structs (no way to check :( );
+ *              values being Dct_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
  *              trimmed image (if necessary)
  */
@@ -44,35 +49,68 @@ static void compress(Pnm_ppm image)
 }
 
 /*
- *  Name      : toCie
+ *  Name      : quantize
  *  Purpose   : Copy the old image data into the new image data
- *              going from RGB float to CIE float
+ *              going from DCT float to DCT int
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
- *              (A2Methods_Object *) ptr     = The CIE value in the new array
- *              (void *)             cl      = The RGB float image
+ *              (A2Methods_Object *) ptr     = The DCT value in the new array
+ *              (void *)             cl      = The DCT float image
  *  Output    : (None)
  *  Notes     : Converts the RGB float to CIE float
  */
 static void quantize(int col, int row, A2Methods_UArray2 uarray2, 
                      A2Methods_Object *ptr, void *cl)
 {
-        
+        A2Methods_T       methods = uarray2_methods_plain;
+        A2Methods_UArray2 pixels  = cl;
+        Dct_float         data    = methods -> at(pixels, col, row);
+
+        Dct_int inNewImage = ptr;
+        float     a          = data -> a;
+        float     b          = data -> b;
+        float     c          = data -> c;
+        float     d          = data -> d;
+        float     pb         = data -> pb;
+        float     pr         = data -> pr;
+        struct DCT_int newPixel = {
+                ytoBits(a), /*TODO: FIX THIS*/
+                ytoBits(b),
+                ytoBits(c),
+                ytoBits(d),
+                Arith40_index_of_chroma(pb),
+                Arith40_index_of_chroma(pr)
+        };
+        *inNewImage = newPixel;
+        (void) uarray2;
 }
-static unsigned yToBits(float y)
+
+/*
+ *  Name      : yToBits
+ *  Purpose   : Maps luma float values to luma int values
+ *  Parameters: (float) y       =       The value to convert
+ *  Output    : An int representing the scaled luma value
+ */
+static signed yToBits(float y)
 {
-
+        if (y > maxFloat) {
+                return maxInt;
+        }
+        if (y < (-1 * maxFloat)) {
+                return -1 * maxInt;
+        }
+        result = (signed)(y * scaleFactor);
+        return result;
 }
-
 
 /*
  *  Name      : decompress
- *  Purpose   : Turn the CIE float image into a RGB float image
- *  Parameters: (Pnm_ppm) image = The original image to trim
+ *  Purpose   : Turn the DCT float image into a DCT int image
+ *  Parameters: (Pnm_ppm) image = Image with Dct_ints as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
- *              values being Cie_float structs (no way to check :( );
+ *              values being Dct_int structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
  *              trimmed image (if necessary)
  */
@@ -94,25 +132,60 @@ static void decompress(Pnm_ppm image)
 }
 
 /*
- *  Name      : toFloat
+ *  Name      : dequantize
  *  Purpose   : Copy the old image data into the new image data 
- *              going from CIE float to RGB float
+ *              going from DCT int to DCT float
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
- *              (A2Methods_Object *) ptr     = The RGB value in the new array
- *              (void *)             cl      = The CIE float image
+ *              (A2Methods_Object *) ptr     = The DCT value in the new array
+ *              (void *)             cl      = The DCT int image
  *  Output    : (None)
  *  Notes     : Converts the CIE float to RGB float
  */
 static void dequantize(int col, int row, A2Methods_UArray2 uarray2, 
                        A2Methods_Object *ptr, void *cl)
 {
+        A2Methods_T       methods = uarray2_methods_plain;
+        A2Methods_UArray2 pixels  = cl;
+        Dct_int           data    = methods -> at(pixels, col, row);
+
+        Dct_float inNewImage = ptr;
+        int     a          = data -> a;
+        int     b          = data -> b;
+        int     c          = data -> c;
+        int     d          = data -> d;
+        int     pb         = data -> pb;
+        int     pr         = data -> pr;
+        struct DCT_int newPixel = {
+                ytoFloat(a),
+                ytoFloat(b),
+                ytoFloat(c),
+                ytoFloat(d),
+                Arith40_chroma_of_index(pb),
+                Arith40_chroma_of_index(pr)
+        };
+        *inNewImage = newPixel;
+        (void) uarray2;
 
 }
+
+/*
+ *  Name      : yToFloat
+ *  Purpose   : Maps luma int values to luma float values
+ *  Parameters: (unsigned) y       =   The value to convert
+ *  Output    : An float representing the scaled luma value
+ */
 static float yToFloat(unsigned y)
 {
-
+        if (y > maxInt) {
+                return maxFloat;
+        }
+        if (y < (-1 * maxInt)) {
+                return -1 * maxFloat;
+        }
+        result = 1.0 * (y / scaleFactor);
+        return result;
 }
 
 static struct CompressionStep quantizationStepStruct = {

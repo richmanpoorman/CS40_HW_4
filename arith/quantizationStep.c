@@ -5,7 +5,7 @@
 #include "PixelStructs.h"
 #include <stdio.h>
 #include <arith40.h>
-#include "codewordInfo.c"
+#include "codewordInfo.h"
 
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
@@ -94,16 +94,17 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
  */
 static int bcdToBits(float x)
 {
-        maxFloat = getMaxFloat();
-        maxInt = getBCDLength();
-        scaleFactor = getScaleFactor();
+        float maxFloat = getMaxFloat();
+        int   maxInt   = getBCDLength();
+        int   result   = floatToInt(x, maxInt, -maxFloat, maxFloat);
+        /* scaleFactor = getScaleFactor();
         if (x > maxFloat) {
                 return maxInt;
         }
         if (x < (-1 * maxFloat)) {
                 return -1 * maxInt;
         }
-        int result = (int)(x  * scaleFactor);
+        int result = (int)(x  * scaleFactor); */
         return result;
 }
 
@@ -115,8 +116,8 @@ static int bcdToBits(float x)
  */
 static int aToBits(float a) 
 {
-        maxAInt = getALength();
-        int result = (int)(a * maxAInt);
+        int maxAInt = getALength();
+        int result = floatToInt(a, maxAInt, -maxAInt, maxAInt);
         return result;
 }
 
@@ -195,16 +196,10 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
  */
 static float bcdToFloat(int x)
 {
-        maxFloat = getMaxFloat();
-        maxInt = getBCDLength();
-        scaleFactor = getScaleFactor();
-        if (x > maxInt) {
-                return maxFloat;
-        }
-        if (x < (-1 * maxInt)) { 
-                return -1 * maxFloat;
-        }
-        float result = 1.0 * x / scaleFactor;
+        float maxFloat = getMaxFloat();
+        int   maxInt   = getBCDLength();
+        /* scaleFactor = getScaleFactor(); */
+        float result = intToFloat(x, maxInt, -maxFloat, maxFloat);
         return result;
 }
 
@@ -216,8 +211,8 @@ static float bcdToFloat(int x)
  */
 static float aToFloat(int a) 
 {
-        maxAInt = getALength();
-        float result = 1.0 * a / maxAInt;
+        int   maxAInt = getALength();
+        float result  = intToFloat(a, maxAInt, 0.0, 1.0);
         return result;
 }
 

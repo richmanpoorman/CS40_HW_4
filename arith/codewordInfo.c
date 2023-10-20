@@ -1,4 +1,3 @@
-#include "codewordInfo.h"
 
 #define numBCDBits 4
 #define numABits 9

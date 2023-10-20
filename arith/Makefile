@@ -51,7 +51,7 @@ INCLUDES = $(shell echo *.h)
 
 COMPRESSION_FILES = arith.o uarray2.o a2plain.o trimStep.o \
 	rgbIntToFloatStep.o rgbToCieStep.o DCTStep.o quantizationStep.o \
-	PixelStructs.o bitpack.o
+	PixelStructs.o bitpack.o codewordInfo.o
 
 ############### Rules ###############
 

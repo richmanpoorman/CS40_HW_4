@@ -23,3 +23,11 @@ int getALength() {
 int getScaleFactor() {
         return scaleFactor;
 }
+
+#undef numBCDBits 
+#undef numABits 
+#undef maxFloat
+
+#undef maxInt 
+#undef maxAInt 
+#undef scaleFactor 

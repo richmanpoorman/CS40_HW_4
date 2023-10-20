@@ -87,8 +87,8 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
 }
 
 /*
- *  Name      : yToBits
- *  Purpose   : Maps luma float values to luma int values
+ *  Name      : bcdToBits
+ *  Purpose   : Maps luma b, c, and d float values to luma int values
  *  Parameters: (float) y       =       The value to convert
  *  Output    : An int representing the scaled luma value
  */
@@ -107,6 +107,12 @@ static int bcdToBits(float x)
         return result;
 }
 
+/*
+ *  Name      : aToBits
+ *  Purpose   : Maps luma a float value to luma a int values
+ *  Parameters: (float) y       =       The value to convert
+ *  Output    : An int representing the scaled luma value
+ */
 static int aToBits(float a) 
 {
         maxAInt = getALength();
@@ -117,7 +123,7 @@ static int aToBits(float a)
 
 /*
  *  Name      : decompress
- *  Purpose   : Turn the DCT float image into a DCT int image
+ *  Purpose   : COnvert the DCT float image into a DCT int image
  *  Parameters: (Pnm_ppm) image = Image with Dct_ints as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
@@ -183,7 +189,7 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : bcdToFloat
- *  Purpose   : Maps luma int values to luma float values
+ *  Purpose   : Maps luma b, c,  and d int values to luma float values
  *  Parameters: (unsigned) x       =   The value to convert
  *  Output    : An float representing the scaled luma value
  */
@@ -202,6 +208,12 @@ static float bcdToFloat(int x)
         return result;
 }
 
+/*
+ *  Name      : aToFloat
+ *  Purpose   : Maps luma a float value to luma a int value
+ *  Parameters: (float) y       =       The value to convert
+ *  Output    : An float representing the scaled luma value
+ */
 static float aToFloat(int a) 
 {
         maxAInt = getALength();

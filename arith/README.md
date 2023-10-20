@@ -5,4 +5,4 @@ Implementation:
 Files:
 Time: 
         - Problem Analysis: 6h
-        - Problem Solving: 4h
+        - Problem Solving: 14h

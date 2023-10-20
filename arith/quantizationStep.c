@@ -19,7 +19,7 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
                        A2Methods_Object *ptr, void *cl);
 
 static signed yToBits(float y);
-static float    yToFloat(unsigned y);
+static float  yToFloat(unsigned y);
 
 /*
  *  Name      : compress
@@ -181,7 +181,7 @@ static float yToFloat(unsigned y)
         if (y > maxInt) {
                 return maxFloat;
         }
-        if (y == 0) { // TODO: Unsigned can't be negative
+        if (y == 0) { // TODO: < (-1 * maxInt) can't happen because unsigned
                 return -1 * maxFloat;
         }
         float result = 1.0 * y / scaleFactor;

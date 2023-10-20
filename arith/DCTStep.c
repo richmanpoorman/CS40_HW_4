@@ -15,6 +15,7 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
 static void dctToCie(int col, int row, A2Methods_UArray2 uarray2, 
                      A2Methods_Object *ptr, void *cl);
 
+static float clampToRange(float input, float lower, float upper);
 
 /*
  *  Name      : compress
@@ -63,8 +64,8 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
         int oldRow = row * 2;
 
         Cie_float topLeft  = methods -> at(pixels, oldCol    , oldRow    );
-        Cie_float topRight = methods -> at(pixels, oldCol    , oldRow + 1);
-        Cie_float botLeft  = methods -> at(pixels, oldCol + 1, oldRow    );
+        Cie_float topRight = methods -> at(pixels, oldCol + 1, oldRow    );
+        Cie_float botLeft  = methods -> at(pixels, oldCol    , oldRow + 1);
         Cie_float botRight = methods -> at(pixels, oldCol + 1, oldRow + 1);
 
         float pbAverage = (
@@ -91,12 +92,12 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
         float d = (y4 - y3 - y2 + y1) / 4;
 
         struct Dct_float newPixel = {
-                a, 
-                b, 
-                c, 
-                d, 
-                pbAverage, 
-                prAverage
+                clampToRange(a, 0.0, 1.0), 
+                clampToRange(b, -0.5, 0.5), 
+                clampToRange(c, -0.5, 0.5), 
+                clampToRange(d, -0.5, 0.5), 
+                clampToRange(pbAverage, -0.5, 0.5), 
+                clampToRange(prAverage, -0.5, 0.5)
         };
 
         *inNewImage = newPixel;
@@ -184,21 +185,25 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
                 assert(false);
         }
 
-        if (y < 0) {
-                y = 0;
-        }
-        if (y > 1) {
-                y = 1;
-        }
-
         struct Cie_float newPixel = {
-                y,
-                data -> pb, 
-                data -> pr
+                clampToRange(y, 0.0, 1.0),
+                clampToRange(data -> pb, -0.5, 0.5), 
+                clampToRange(data -> pr, -0.5, 0.5)
         };
 
         *inNewImage = newPixel;
         (void) uarray2;
+}
+
+static float clampToRange(float input, float lower, float upper)
+{
+        if (input < lower) {
+                input = lower;
+        }
+        if (input > upper) {
+                input = upper;
+        }
+        return input;
 }
 
 static struct CompressionStep DCTStruct = {

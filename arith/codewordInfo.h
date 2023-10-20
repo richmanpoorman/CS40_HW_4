@@ -5,6 +5,7 @@
  *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
  */
 
+float getMaxFloat();
 int getBCDLength();
 int getALength();
 int getScaleFactor();

@@ -5,17 +5,7 @@
 #include "PixelStructs.h"
 #include <stdio.h>
 #include <arith40.h>
-
-
-/* TODO: Changed to be based on the bits; should be moved to a 
-   different file */
-#define numBCDBits 4
-#define numABits 9
-#define maxFloat 0.3
-
-#define maxInt (1 << numBCDBits)
-#define maxAInt (1 << numABits)
-#define scaleFactor (maxInt / maxFloat)
+#include "codewordInfo.c"
 
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
@@ -28,7 +18,6 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
 static int   bcdToBits(float x);
 static float bcdToFloat(int x);
 
-/* TODO: Added these functions to handle the different case */
 static int   aToBits(float a);
 static float aToFloat(int a);
 
@@ -86,7 +75,7 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
         float     pb         = data -> pb;
         float     pr         = data -> pr;
         struct Dct_int newPixel = {
-                aToBits(a), /*TODO: FIX THIS | Changed this */
+                aToBits(a), 
                 bcdToBits(b),
                 bcdToBits(c),
                 bcdToBits(d),
@@ -105,6 +94,9 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
  */
 static int bcdToBits(float x)
 {
+        maxFloat = getMaxFloat();
+        maxInt = getBCDLength();
+        scaleFactor = getScaleFactor();
         if (x > maxFloat) {
                 return maxInt;
         }
@@ -117,6 +109,7 @@ static int bcdToBits(float x)
 
 static int aToBits(float a) 
 {
+        maxAInt = getALength();
         int result = (int)(a * maxAInt);
         return result;
 }
@@ -176,7 +169,7 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
         int     pb         = data -> pb;
         int     pr         = data -> pr;
         struct Dct_float newPixel = {
-                aToFloat(a),   /*TODO: FIX THIS | Changed this */
+                aToFloat(a),  
                 bcdToFloat(b),
                 bcdToFloat(c),
                 bcdToFloat(d),
@@ -196,17 +189,22 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
  */
 static float bcdToFloat(int x)
 {
+        maxFloat = getMaxFloat();
+        maxInt = getBCDLength();
+        scaleFactor = getScaleFactor();
         if (x > maxInt) {
                 return maxFloat;
         }
-        if (x < (-1 * maxInt)) { // TODO:  can't happen because unsigned
+        if (x < (-1 * maxInt)) { 
                 return -1 * maxFloat;
         }
         float result = 1.0 * x / scaleFactor;
         return result;
 }
+
 static float aToFloat(int a) 
 {
+        maxAInt = getALength();
         float result = 1.0 * a / maxAInt;
         return result;
 }

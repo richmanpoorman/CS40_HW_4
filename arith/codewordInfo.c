@@ -8,6 +8,10 @@
 #define maxAInt (1 << numABits)
 #define scaleFactor (maxInt / maxFloat)
 
+float getMaxFloat () {
+        return maxFloat;
+}
+
 int getBCDLength() {
         return maxInt - 1;
 }

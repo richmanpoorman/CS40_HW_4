@@ -1,4 +1,4 @@
-#include "compress40.h"
+#include "arith.h"
 #include "a2plain.h"
 #include <pnm.h>
 #include <string.h>

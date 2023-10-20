@@ -1,3 +1,3 @@
-#include "DCTStep.h"
+#include "CompressionStep.h"
 
 extern CompressionStep DCTStep;

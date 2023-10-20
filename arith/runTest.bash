@@ -13,13 +13,19 @@ IMAGES=("flowers" "animals" "desert" "erosion" "from-wind-cave" \
 OUTPUT_PATH="Test/OutputFiles/"
 
 
+valgrindStep() {
+        touch $OUTPUT_PATH$imageOutput.valgrind
+        valgrind ./testSteps $1 > $OUTPUT_PATH$imageOutput.valgrind
+        rm $OUTPUT_PATH$imageOutput.valgrind
+}
+
 jpegSelfCompare() {
         cjpeg $1 | djpeg -pnm | ./ppmdiff $1 -
 }
 
 comp40SelfCompare() {
         touch $OUTPUT_PATH$imageOutput.ppm
-        valgrind ./testSteps $1 > $OUTPUT_PATH$imageOutput.ppm
+        ./testSteps $1 > $OUTPUT_PATH$imageOutput.ppm
         ./ppmdiff $1 $OUTPUT_PATH$imageOutput.ppm
 }
 
@@ -48,6 +54,8 @@ for image in "${IMAGES[@]}"; do
 
         echo JPEG vs Our Implementation
         jpegComp40Compare $OUTPUT_PATH$image.out
+
+        
 
         echo 
         rm $OUTPUT_PATH$image.out

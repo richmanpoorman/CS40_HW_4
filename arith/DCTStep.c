@@ -4,14 +4,16 @@
 #include <a2methods.h>  
 #include "PixelStructs.h"
 #include <stdio.h>
+#include <assert.h>
+#include <stdbool.h>
 
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
 
-static void toFloat(int col, int row, A2Methods_UArray2 uarray2, 
-                    A2Methods_Object *ptr, void *cl);
-static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
-                  A2Methods_Object *ptr, void *cl);
+static void cieToDct(int col, int row, A2Methods_UArray2 uarray2, 
+                     A2Methods_Object *ptr, void *cl);
+static void dctToCie(int col, int row, A2Methods_UArray2 uarray2, 
+                     A2Methods_Object *ptr, void *cl);
 
 
 /*
@@ -25,56 +27,78 @@ static void toInt(int col, int row, A2Methods_UArray2 uarray2,
  */
 static void compress(Pnm_ppm image)
 {
+        assert(image != NULL);
         int width  = image -> width;
         int height = image -> height;
 
-        int newWidth  = width / 2;
+        int newWidth  = width  / 2;
         int newHeight = height / 2;
 
         A2Methods_T methods = uarray2_methods_plain;
-
-        A2Methods_UArray2 pixels      = image -> pixels;
-        int               size        = sizeof(struct Dct_float);
-        A2Methods_UArray2 newImage    = methods -> new(newWidth, 
-                                                       newHeight, size);
         
+        A2Methods_UArray2 pixels   = image -> pixels;
+        int               size     = sizeof(struct Dct_float);
+        A2Methods_UArray2 newImage = methods -> new(newWidth, newHeight, size);
+        
+        assert(image    != NULL);
+        assert(newImage != NULL);
 
-        methods -> map_row_major(newImage, toFloat, image);
+        methods -> map_row_major(newImage, cieToDct, pixels);
         methods -> free(&pixels);
         
-        image -> pixels      = newImage;
-        image -> denominator = 1;
+        image -> pixels = newImage;
+        image -> width  = newWidth;
+        image -> height = newHeight;
 }
 
-/*
- *  Name      : toFloat
- *  Purpose   : Copy the old image data into the new image data
- *              going from RGB int to RGB float
- *  Parameters: (int)                col     = The current column to copy
- *              (int)                row     = The current row to copy
- *              (A2Methods_UArray2)  uarray2 = The new array to copy into
- *              (A2Methods_Object *) ptr     = The RGB value in the new array
- *              (void *)             cl      = The package of the array with 
- *                                             RGB ints along with the 
- *                                             denominator
- *  Output    : (None)
- *  Notes     : Converts the RGB values of ints to RGB values of floats
- */
-static void toFloat(int col, int row, A2Methods_UArray2 uarray2, 
-                    A2Methods_Object *ptr, void *cl)
+static void cieToDct(int col, int row, A2Methods_UArray2 uarray2, 
+                     A2Methods_Object *ptr, void *cl)
 {
 
-        A2Methods_T       methods     = uarray2_methods_plain;
-        Pnm_ppm           image       = cl;
-        A2Methods_UArray2 pixels      = image -> pixels;
-        int               denominator = image -> denominator;
-        Pnm_rgb           data        = methods -> at(pixels, col, row);
-        Rgb_float         inNewImage  = ptr;
-        struct Rgb_float newPixel = {
-                1.0 * (data -> red)   / denominator,
-                1.0 * (data -> green) / denominator,
-                1.0 * (data -> blue)  / denominator
+        A2Methods_T       methods    = uarray2_methods_plain;
+        A2Methods_UArray2 pixels     = cl;
+        Dct_float         inNewImage = ptr;
+
+        int oldCol = col * 2;
+        int oldRow = row * 2;
+
+        Cie_float topLeft  = methods -> at(pixels, oldCol    , oldRow    );
+        Cie_float topRight = methods -> at(pixels, oldCol    , oldRow + 1);
+        Cie_float botLeft  = methods -> at(pixels, oldCol + 1, oldRow    );
+        Cie_float botRight = methods -> at(pixels, oldCol + 1, oldRow + 1);
+
+        float pbAverage = (
+                           topLeft  -> pb +
+                           topRight -> pb + 
+                           botLeft  -> pb +
+                           botRight -> pb
+                          ) / 4;
+        float prAverage = (
+                           topLeft  -> pr +
+                           topRight -> pr + 
+                           botLeft  -> pr +
+                           botRight -> pr
+                          ) / 4;
+        
+        float y1 = topLeft  -> y;
+        float y2 = topRight -> y;
+        float y3 = botLeft  -> y;
+        float y4 = botRight -> y;
+
+        float a = (y4 + y3 + y2 + y1) / 4;
+        float b = (y4 + y3 - y2 - y1) / 4;
+        float c = (y4 - y3 + y2 - y1) / 4;
+        float d = (y4 - y3 - y2 + y1) / 4;
+
+        struct Dct_float newPixel = {
+                a, 
+                b, 
+                c, 
+                d, 
+                pbAverage, 
+                prAverage
         };
+
         *inNewImage = newPixel;
         (void) uarray2;
 }
@@ -92,48 +116,87 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
  */
 static void decompress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
+        int newWidth  = width  * 2;
+        int newHeight = height * 2; 
+
+
         A2Methods_T methods = uarray2_methods_plain;
 
-        A2Methods_UArray2 pixels      = image -> pixels;
-        int               size        = sizeof(struct Pnm_rgb);
-        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        A2Methods_UArray2 pixels   = image -> pixels;
+        int               size     = sizeof(struct Cie_float);
+        A2Methods_UArray2 newImage = methods -> new(newWidth, newHeight, size);
 
-        methods -> map_row_major(newImage, toInt, pixels);
+        assert(image    != NULL);
+        assert(newImage != NULL);
+
+        methods -> map_row_major(newImage, dctToCie, pixels);
         methods -> free(&pixels);
         
-        image -> pixels      = newImage;
-        image -> denominator = toIntDenominator;
+        image -> pixels = newImage;
+        image -> width  = newWidth;
+        image -> height = newHeight;
 }
 
-/*
- *  Name      : toInt
- *  Purpose   : Copy the old image data into the new image data
- *  Parameters: (int)                col     = The current column to copy
- *              (int)                row     = The current row to copy
- *              (A2Methods_UArray2)  uarray2 = The new array to copy into
- *              (A2Methods_Object *) ptr     = The RGB value in the new array
- *              (void *)             cl      = The array with RGB floats
- *  Output    : (None)
- *  Notes     : Converts the RGB values of floats to RGB values of ints
- *              Uses the global variable toIntDenominator as the new 
- *              denominator
- */
-static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
-                  A2Methods_Object *ptr, void *cl)
+static void dctToCie(int col, int row, A2Methods_UArray2 uarray2, 
+                     A2Methods_Object *ptr, void *cl)
 {
-        A2Methods_T       methods     = uarray2_methods_plain;
-        A2Methods_UArray2 pixels      = cl;
-        Rgb_float         data        = methods -> at(pixels, col, row);
-        Pnm_rgb           inNewImage  = ptr;
+        A2Methods_T       methods    = uarray2_methods_plain;
+        A2Methods_UArray2 pixels     = cl;
+        Cie_float         inNewImage = ptr;
 
-        struct Pnm_rgb newPixel = {
-                (int)((data -> red)   * toIntDenominator),
-                (int)((data -> green) * toIntDenominator),
-                (int)((data -> blue)  * toIntDenominator)
+        int oldCol = col / 2;
+        int oldRow = row / 2;
+
+        
+
+        Dct_float data   = methods -> at(pixels, oldCol, oldRow); 
+        int       yIndex = (col % 2) + 2 * (row % 2) + 1;
+        
+        float a = data -> a;
+        float b = data -> b;
+        float c = data -> c;
+        float d = data -> d;
+
+        float y = -1;
+        switch(yIndex) {
+                case 1:
+                y = a - b - c - d;
+                break;
+                
+                case 2:
+                y = a - b + c - d;
+                break;
+
+                case 3:
+                y = a + b - c - d;
+                break;
+
+                case 4: 
+                y = a + b + c + d;
+                break;
+
+                default:
+                assert(false);
+        }
+
+        if (y < 0) {
+                y = 0;
+        }
+        if (y > 1) {
+                y = 1;
+        }
+
+        struct Cie_float newPixel = {
+                y,
+                data -> pb, 
+                data -> pr
         };
+
         *inNewImage = newPixel;
         (void) uarray2;
 }

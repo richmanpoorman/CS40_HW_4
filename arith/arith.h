@@ -1,27 +1,9 @@
 #include <stdio.h>
 #include <pnm.h>
 
-#ifndef COMPRESS_40_
-#define COMPRESS_40_
+#ifndef ARITH_H_
+#define ARITH_H_
 
-
-/*
- *  Name      : compress40
- *  Purpose   : Take the image and print the compressed output to stdout
- *  Parameters: (FILE *) input = The input file to read the image from
- *  Output    : (None)
- *  Notes     : Assumes that the file is open
- */
-void compress40(FILE *input);
-/*
- *  Name      : decompress40
- *  Purpose   : Take the compressed image and prints the 
- *              decompressed image to stdout
- *  Parameters: (FILE *) input = The input file to read the image from
- *  Output    : (None)
- *  Notes     : Assumes that the file is open
- */
-void decompress40(FILE *input);
 
 /*
  *  Name      : compress40Output

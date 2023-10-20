@@ -33,6 +33,7 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
 static void toRgb(int col, int row, A2Methods_UArray2 uarray2, 
                   A2Methods_Object *ptr, void *cl);
 
+static float clampToRange(float input, float lower, float upper);
 
 /*
  *  Name      : compress
@@ -85,10 +86,14 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
         float     r          = data -> red;
         float     g          = data -> green;
         float     b          = data -> blue;
+
+        float y  = rToY  * r + gToY  * g + bToY  * b;
+        float pb = rToPb * r + gToPb * g + bToPb * b;
+        float pr = rToPr * r + gToPr * g + bToPr * b;
         struct Cie_float newPixel = {
-                rToY  * r + gToY  * g + bToY  * b,
-                rToPb * r + gToPb * g + bToPb * b,
-                rToPr * r + gToPr * g + bToPr * b
+                clampToRange(y, 0.0, 1.0),
+                clampToRange(pb, -0.5, 0.5),
+                clampToRange(pr, -0.5, 0.5)
         };
         *inNewImage = newPixel;
         (void) uarray2;
@@ -145,13 +150,28 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
         float     y          = data -> y;
         float     pb         = data -> pb;
         float     pr         = data -> pr;
+
+        float r = yToR * y + pbToR * pb + prToR * pr;
+        float g = yToG * y + pbToG * pb + prToG * pr;
+        float b = yToB * y + pbToB * pb + prToB * pr;
         struct Rgb_float newPixel = {
-                yToR * y + pbToR * pb + prToR * pr,
-                yToG * y + pbToG * pb + prToG * pr,
-                yToB * y + pbToB * pb + prToB * pr
+                clampToRange(r, 0.0, 1.0),
+                clampToRange(g, 0.0, 1.0),
+                clampToRange(b, 0.0, 1.0)
         };
         *inNewImage = newPixel;
         (void) uarray2;
+}
+
+static float clampToRange(float input, float lower, float upper)
+{
+        if (input < lower) {
+                input = lower;
+        }
+        if (input > upper) {
+                input = upper;
+        }
+        return input;
 }
 
 static struct CompressionStep rgbToCieStepStruct = {

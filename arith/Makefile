@@ -35,7 +35,8 @@ LDFLAGS = -g -L/comp/40/build/lib -L/usr/sup/cii40/lib64
 # All programs cii40 (Hanson binaries) and *may* need -lm (math)
 # 40locality is a catch-all for this assignment, netpbm is needed for pnm
 # rt is for the "real time" timing library, which contains the clock support
-LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt
+LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt \
+	-I/comp/40/build/include
 
 # Collect all .h files in your directory.
 # This way, you can never forget to add
@@ -47,8 +48,8 @@ LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt
 # dependency list.
 INCLUDES = $(shell echo *.h)
 
-COMPRESSION_FILES = compress40.o uarray2.o a2plain.o trimStep.o \
-	rgbIntToFloatStep.o rgbToCieStep.o
+COMPRESSION_FILES = arith.o uarray2.o a2plain.o trimStep.o \
+	rgbIntToFloatStep.o rgbToCieStep.o DCTStep.o
 
 ############### Rules ###############
 
@@ -66,7 +67,7 @@ all: ppmdiff 40image
 testSteps: DefaultTest.o $(COMPRESSION_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-40image: 40image.o $(COMPRESSION_FILES)
+40image: 40image.o compress40.o $(COMPRESSION_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 ppmdiff: a2plain.o uarray2.o ppmdiff.o 

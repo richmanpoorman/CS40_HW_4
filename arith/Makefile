@@ -51,12 +51,13 @@ INCLUDES = $(shell echo *.h)
 
 COMPRESSION_FILES = arith.o uarray2.o a2plain.o trimStep.o \
 	rgbIntToFloatStep.o rgbToCieStep.o DCTStep.o quantizationStep.o \
-	PixelStructs.o
+	PixelStructs.o bitpack.o
 
 ############### Rules ###############
 
-all: ppmdiff 40image
+all: ppmdiff 40image test
 
+test: testSteps customTest
 
 ## Compile step (.c files -> .o files)
 
@@ -66,6 +67,9 @@ all: ppmdiff 40image
 
 
 ## Linking step (.o -> executable program)
+customTest: CustomTest.o $(COMPRESSION_FILES)
+	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+
 testSteps: DefaultTest.o $(COMPRESSION_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 

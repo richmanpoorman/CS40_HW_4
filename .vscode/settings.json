@@ -4,6 +4,8 @@
                 "compressionstep.h": "c",
                 "xstring": "c",
                 "rgbtociestep.h": "c",
-                "rgbinttofloatstep.h": "c"
+                "rgbinttofloatstep.h": "c",
+                "type_traits": "c",
+                "xtr1common": "c"
         }
 }

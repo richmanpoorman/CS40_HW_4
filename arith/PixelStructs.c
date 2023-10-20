@@ -18,7 +18,7 @@ float clampToRange(float input, float lower, float upper)
 int   floatToInt(float input, int denominator, int lower, int upper)
 {
         
-        float scaled = input * denominator;
+        float scaled = round(input * denominator);
 
         if (scaled > upper) {
                 return upper;

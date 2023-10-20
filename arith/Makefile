@@ -50,7 +50,8 @@ LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt -L/comp/40/build/lib -larith40
 INCLUDES = $(shell echo *.h)
 
 COMPRESSION_FILES = arith.o uarray2.o a2plain.o trimStep.o \
-	rgbIntToFloatStep.o rgbToCieStep.o DCTStep.o quantizationStep.o
+	rgbIntToFloatStep.o rgbToCieStep.o DCTStep.o quantizationStep.o \
+	PixelStructs.o
 
 ############### Rules ###############
 

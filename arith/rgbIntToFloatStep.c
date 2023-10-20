@@ -5,7 +5,7 @@
 #include "PixelStructs.h"
 #include <stdio.h>
 
-#define toIntDenominator 255
+#define intDenominator 255
 
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
@@ -69,9 +69,9 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
         Pnm_rgb           data        = methods -> at(pixels, col, row);
         Rgb_float         inNewImage  = ptr;
         struct Rgb_float newPixel = {
-                1.0 * (data -> red)   / denominator,
-                1.0 * (data -> green) / denominator,
-                1.0 * (data -> blue)  / denominator
+                intToFloat(data -> red  , denominator, 0, 1),
+                intToFloat(data -> green, denominator, 0, 1),
+                intToFloat(data -> blue , denominator, 0, 1)
         };
         *inNewImage = newPixel;
         (void) uarray2;
@@ -103,7 +103,7 @@ static void decompress(Pnm_ppm image)
         methods -> free(&pixels);
         
         image -> pixels      = newImage;
-        image -> denominator = toIntDenominator;
+        image -> denominator = intDenominator;
 }
 
 /*
@@ -116,7 +116,7 @@ static void decompress(Pnm_ppm image)
  *              (void *)             cl      = The array with RGB floats
  *  Output    : (None)
  *  Notes     : Converts the RGB values of floats to RGB values of ints
- *              Uses the global variable toIntDenominator as the new 
+ *              Uses the global variable intDenominator as the new 
  *              denominator
  */
 static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
@@ -128,9 +128,9 @@ static void toInt(int col, int row, A2Methods_UArray2 uarray2,
         Pnm_rgb           inNewImage  = ptr;
 
         struct Pnm_rgb newPixel = {
-                (int)((data -> red)   * toIntDenominator),
-                (int)((data -> green) * toIntDenominator),
-                (int)((data -> blue)  * toIntDenominator)
+                floatToInt(data -> red  , intDenominator, 0, intDenominator),
+                floatToInt(data -> green, intDenominator, 0, intDenominator),
+                floatToInt(data -> blue , intDenominator, 0, intDenominator)
         };
         *inNewImage = newPixel;
         (void) uarray2;
@@ -143,4 +143,4 @@ static struct CompressionStep rgbIntToFloatStruct = {
 
 CompressionStep rgbIntToFloatStep = &rgbIntToFloatStruct;
 
-#undef toIntDenominator
+#undef intDenominator

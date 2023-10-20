@@ -74,11 +74,11 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
         float     d          = data -> d;
         float     pb         = data -> pb;
         float     pr         = data -> pr;
-        struct DCT_int newPixel = {
-                ytoBits(a), /*TODO: FIX THIS*/
-                ytoBits(b),
-                ytoBits(c),
-                ytoBits(d),
+        struct Dct_int newPixel = {
+                yToBits(a), /*TODO: FIX THIS*/
+                yToBits(b),
+                yToBits(c),
+                yToBits(d),
                 Arith40_index_of_chroma(pb),
                 Arith40_index_of_chroma(pr)
         };
@@ -100,7 +100,7 @@ static signed yToBits(float y)
         if (y < (-1 * maxFloat)) {
                 return -1 * maxInt;
         }
-        result = (signed)(y * scaleFactor);
+        signed result = (signed)(y * scaleFactor);
         return result;
 }
 
@@ -157,11 +157,11 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
         int     d          = data -> d;
         int     pb         = data -> pb;
         int     pr         = data -> pr;
-        struct DCT_int newPixel = {
-                ytoFloat(a),
-                ytoFloat(b),
-                ytoFloat(c),
-                ytoFloat(d),
+        struct Dct_float newPixel = {
+                yToFloat(a),
+                yToFloat(b),
+                yToFloat(c),
+                yToFloat(d),
                 Arith40_chroma_of_index(pb),
                 Arith40_chroma_of_index(pr)
         };
@@ -181,10 +181,10 @@ static float yToFloat(unsigned y)
         if (y > maxInt) {
                 return maxFloat;
         }
-        if (y < (-1 * maxInt)) {
+        if (y == 0) { // TODO: Unsigned can't be negative
                 return -1 * maxFloat;
         }
-        result = 1.0 * (y / scaleFactor);
+        float result = 1.0 * y / scaleFactor;
         return result;
 }
 

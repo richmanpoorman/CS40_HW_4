@@ -13,7 +13,8 @@
 CC = gcc # The compiler being used
 
 # Updating include path to use Comp 40 .h files and CII interfaces
-IFLAGS = -I/comp/40/build/include -I/usr/sup/cii40/include/cii
+IFLAGS = -I/comp/40/build/include -I/usr/sup/cii40/include/cii \
+	 -I/comp/40/build/lib
 
 # Compile flags
 # Set debugging information, allow the c99 standard,
@@ -30,13 +31,13 @@ CFLAGS = -g -std=gnu99 -Wall -Wextra -Werror -Wfatal-errors -pedantic $(IFLAGS)
 # Set debugging information and update linking path
 # to include course binaries and CII implementations
 LDFLAGS = -g -L/comp/40/build/lib -L/usr/sup/cii40/lib64
+	  
 
 # Libraries needed for linking
 # All programs cii40 (Hanson binaries) and *may* need -lm (math)
 # 40locality is a catch-all for this assignment, netpbm is needed for pnm
 # rt is for the "real time" timing library, which contains the clock support
-LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt \
-	-I/comp/40/build/include
+LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt -L/comp/40/build/lib -larith40
 
 # Collect all .h files in your directory.
 # This way, you can never forget to add
@@ -49,7 +50,7 @@ LDLIBS = -l40locality -lnetpbm -lcii40 -lm -lrt \
 INCLUDES = $(shell echo *.h)
 
 COMPRESSION_FILES = arith.o uarray2.o a2plain.o trimStep.o \
-	rgbIntToFloatStep.o rgbToCieStep.o DCTStep.o
+	rgbIntToFloatStep.o rgbToCieStep.o DCTStep.o quantizationStep.o
 
 ############### Rules ###############
 

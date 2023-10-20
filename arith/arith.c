@@ -10,7 +10,7 @@
 #include "rgbIntToFloatStep.h"
 #include "rgbToCieStep.h"
 #include "DCTStep.h"
-
+#include "quantizationStep.h"
 
 void compress40Output(FILE *input, FILE *output);
 void decompress40Output(FILE *input, FILE *output);
@@ -19,7 +19,8 @@ void compress40Image(Pnm_ppm image);
 void decompress40Image(Pnm_ppm image);
 
 /* Steps in order of compression */
-#define stepOrder {trimStep, rgbIntToFloatStep, rgbToCieStep, DCTStep}
+#define stepOrder {trimStep, rgbIntToFloatStep, rgbToCieStep, DCTStep, \
+                   quantizationStep}
 
 /*
  *  Name      : compress40Output

@@ -15,8 +15,6 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
 static void dctToCie(int col, int row, A2Methods_UArray2 uarray2, 
                      A2Methods_Object *ptr, void *cl);
 
-static float clampToRange(float input, float lower, float upper);
-
 /*
  *  Name      : compress
  *  Purpose   : Turns the pixels from Cie_float to Dct_float
@@ -92,10 +90,10 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
         float d = (y4 - y3 - y2 + y1) / 4;
 
         struct Dct_float newPixel = {
-                clampToRange(a, 0.0, 1.0), 
-                clampToRange(b, -0.5, 0.5), 
-                clampToRange(c, -0.5, 0.5), 
-                clampToRange(d, -0.5, 0.5), 
+                clampToRange(a        ,  0.0, 1.0), 
+                clampToRange(b        , -0.5, 0.5), 
+                clampToRange(c        , -0.5, 0.5), 
+                clampToRange(d        , -0.5, 0.5), 
                 clampToRange(pbAverage, -0.5, 0.5), 
                 clampToRange(prAverage, -0.5, 0.5)
         };
@@ -186,7 +184,7 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
         }
 
         struct Cie_float newPixel = {
-                clampToRange(y, 0.0, 1.0),
+                clampToRange(y         ,  0.0, 1.0),
                 clampToRange(data -> pb, -0.5, 0.5), 
                 clampToRange(data -> pr, -0.5, 0.5)
         };
@@ -195,16 +193,6 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
         (void) uarray2;
 }
 
-static float clampToRange(float input, float lower, float upper)
-{
-        if (input < lower) {
-                input = lower;
-        }
-        if (input > upper) {
-                input = upper;
-        }
-        return input;
-}
 
 static struct CompressionStep DCTStruct = {
         compress,

@@ -33,8 +33,6 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
 static void toRgb(int col, int row, A2Methods_UArray2 uarray2, 
                   A2Methods_Object *ptr, void *cl);
 
-static float clampToRange(float input, float lower, float upper);
-
 /*
  *  Name      : compress
  *  Purpose   : Convert the RGB float image into a CIE float image
@@ -91,7 +89,7 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
         float pb = rToPb * r + gToPb * g + bToPb * b;
         float pr = rToPr * r + gToPr * g + bToPr * b;
         struct Cie_float newPixel = {
-                clampToRange(y, 0.0, 1.0),
+                clampToRange(y,   0.0, 1.0),
                 clampToRange(pb, -0.5, 0.5),
                 clampToRange(pr, -0.5, 0.5)
         };
@@ -163,16 +161,6 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
         (void) uarray2;
 }
 
-static float clampToRange(float input, float lower, float upper)
-{
-        if (input < lower) {
-                input = lower;
-        }
-        if (input > upper) {
-                input = upper;
-        }
-        return input;
-}
 
 static struct CompressionStep rgbToCieStepStruct = {
         compress,

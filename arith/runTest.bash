@@ -1,17 +1,14 @@
  #! /bin/sh
-
 IMAGE_PATH="Test/InputFiles/"
 # Removed Tests:
 # "empty" "one_by_one" "singlePixel" "verticalLongBar" "horizontalLongBar"
 # "mobo"
 IMAGES=("flowers" "animals" "desert" "erosion" "from-wind-cave" \
-        "halligan"  "twoByTwo" \
-        "nOddMEven" "nOddMOdd"  "nEvenMEven" "nEvenMOdd" \
+        "halligan" "twoByTwo" \
+        "nOddMEven" "nOddMOdd" "nEvenMEven" "nEvenMOdd" \
         "blackSquare" "whiteSquare" "redSquare" "greenSquare" "blueSquare" \
-        "colorBar" "evilDitherTest" "gradient" \
-        ) 
+        "colorBar" "evilDitherTest" "gradient")
 OUTPUT_PATH="Test/OutputFiles/"
-
 
 valgrindStep() {
         touch $OUTPUT_PATH$imageOutput.valgrind

@@ -6,9 +6,16 @@
 #include <stdio.h>
 #include <arith40.h>
 
-#define maxInt 15
+
+/* TODO: Changed to be based on the bits; should be moved to a 
+   different file */
+#define numBCDBits 4
+#define numABits 9
 #define maxFloat 0.3
-#define scaleFactor maxInt / maxFloat
+
+#define maxInt (1 << numBCDBits)
+#define maxAInt (1 << numABits)
+#define scaleFactor (maxInt / maxFloat)
 
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
@@ -18,8 +25,12 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
 static void dequantize(int col, int row, A2Methods_UArray2 uarray2, 
                        A2Methods_Object *ptr, void *cl);
 
-static signed yToBits(float y);
-static float  yToFloat(unsigned y);
+static int   bcdToBits(float x);
+static float bcdToFloat(int x);
+
+/* TODO: Added these functions to handle the different case */
+static int   aToBits(float a);
+static float aToFloat(int a);
 
 /*
  *  Name      : compress
@@ -75,10 +86,10 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
         float     pb         = data -> pb;
         float     pr         = data -> pr;
         struct Dct_int newPixel = {
-                yToBits(a), /*TODO: FIX THIS*/
-                yToBits(b),
-                yToBits(c),
-                yToBits(d),
+                aToBits(a), /*TODO: FIX THIS | Changed this */
+                bcdToBits(b),
+                bcdToBits(c),
+                bcdToBits(d),
                 Arith40_index_of_chroma(pb),
                 Arith40_index_of_chroma(pr)
         };
@@ -92,17 +103,24 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
  *  Parameters: (float) y       =       The value to convert
  *  Output    : An int representing the scaled luma value
  */
-static signed yToBits(float y)
+static int bcdToBits(float x)
 {
-        if (y > maxFloat) {
+        if (x > maxFloat) {
                 return maxInt;
         }
-        if (y < (-1 * maxFloat)) {
+        if (x < (-1 * maxFloat)) {
                 return -1 * maxInt;
         }
-        signed result = (signed)(y * scaleFactor);
+        int result = (int)(x  * scaleFactor);
         return result;
 }
+
+static int aToBits(float a) 
+{
+        int result = (int)(a * maxAInt);
+        return result;
+}
+
 
 /*
  *  Name      : decompress
@@ -158,10 +176,10 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
         int     pb         = data -> pb;
         int     pr         = data -> pr;
         struct Dct_float newPixel = {
-                yToFloat(a),
-                yToFloat(b),
-                yToFloat(c),
-                yToFloat(d),
+                aToFloat(a),   /*TODO: FIX THIS | Changed this */
+                bcdToFloat(b),
+                bcdToFloat(c),
+                bcdToFloat(d),
                 Arith40_chroma_of_index(pb),
                 Arith40_chroma_of_index(pr)
         };
@@ -171,20 +189,25 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
 }
 
 /*
- *  Name      : yToFloat
+ *  Name      : bcdToFloat
  *  Purpose   : Maps luma int values to luma float values
- *  Parameters: (unsigned) y       =   The value to convert
+ *  Parameters: (unsigned) x       =   The value to convert
  *  Output    : An float representing the scaled luma value
  */
-static float yToFloat(unsigned y)
+static float bcdToFloat(int x)
 {
-        if (y > maxInt) {
+        if (x > maxInt) {
                 return maxFloat;
         }
-        if (y == 0) { // TODO: < (-1 * maxInt) can't happen because unsigned
+        if (x < (-1 * maxInt)) { // TODO:  can't happen because unsigned
                 return -1 * maxFloat;
         }
-        float result = 1.0 * y / scaleFactor;
+        float result = 1.0 * x / scaleFactor;
+        return result;
+}
+static float aToFloat(int a) 
+{
+        float result = 1.0 * a / maxAInt;
         return result;
 }
 
@@ -194,3 +217,11 @@ static struct CompressionStep quantizationStepStruct = {
 };
 
 CompressionStep quantizationStep = &quantizationStepStruct;
+
+#undef numBCDBits 
+#undef numABits 
+#undef maxFloat
+
+#undef maxInt 
+#undef maxAInt 
+#undef scaleFactor 

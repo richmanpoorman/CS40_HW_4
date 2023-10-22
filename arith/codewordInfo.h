@@ -7,8 +7,11 @@
  */
 
 float getMaxFloat();
-int getBCDLength();
 int getALength();
-int getScaleFactor();
+int getBLength();
+int getCLength();
+int getDLength();
 int getAMaxValue();
-int getBCDMaxValue();
+int getBMaxValue();
+int getCMaxValue();
+int getDMaxValue();

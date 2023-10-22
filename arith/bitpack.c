@@ -23,7 +23,8 @@ bool Bitpack_fitsu(uint64_t n, unsigned width)
         if (width == MAX_WIDTH) {
                 return true;
         }
-        uint64_t maxValue = 1 << width;
+        uint64_t maxValue = 1
+        maxValue <<= width;
         return n < maxValue;
 }
 bool Bitpack_fitss( int64_t n, unsigned width) 
@@ -49,7 +50,8 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
         assert(width + lsb <= MAX_WIDTH);
 
         /* Get a line of all 1s */
-        uint64_t mask = ~0;
+        uint64_t mask = 0;
+        mask = ~mask;
         
         /* 
          *  Only want (width) amount of 1s, so get rid of 
@@ -90,7 +92,8 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
                  *  then instead we start with all 1's and 
                  *  remove the 1's where the value is 0 as bits
                  */
-                value = ~0 & value;
+                int64_t zero = 0;
+                value = ~zero & value;
         }
         return value;
 }
@@ -101,7 +104,8 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
 
-        uint64_t mask = ~0;
+        uint64_t mask = 0;
+        mask = ~mask;
         
         /* 
          *  Only want (width) amount of 1s, so get rid of 

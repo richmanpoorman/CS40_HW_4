@@ -175,8 +175,6 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
         int     pb         = data -> pb;
         int     pr         = data -> pr;
 
-        fprintf(stderr, "D: %i -> %f\n", d, bcdToFloat(d));
-
         struct Dct_float newPixel = {
                 aToFloat(a),  
                 bcdToFloat(b),

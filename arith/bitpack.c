@@ -45,9 +45,15 @@ bool Bitpack_fitss( int64_t n, unsigned width)
 }
 uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
 {
+        
         assert(width <= MAX_WIDTH);
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
+
+        /* If the data gotten is empty */
+        if (width == 0) {
+                return 0;
+        }
 
         /* Get a line of all 1s */
         uint64_t mask = 0;
@@ -76,10 +82,14 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
 {
         assert(width <= MAX_WIDTH);
-        assert(width >= 1);
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
         
+        /* If the data gotten is empty (including the signed bit) */
+        if (width <= 1) {
+                return 0;
+        }
+
         /* 
          *  The cast here stays within range, as since it is taking
          *  width - 1, it will fit into a int64_t

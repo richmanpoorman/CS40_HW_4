@@ -103,10 +103,10 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
         float y4 = botRight -> y;
 
         /* Converts y -> a, b, c, d for the dct format*/
-        float a = (y4 + y3 + y2 + y1) / 4;
-        float b = (y4 + y3 - y2 - y1) / 4;
-        float c = (y4 - y3 + y2 - y1) / 4;
-        float d = (y4 - y3 - y2 + y1) / 4;
+        float a = (y4 + y3 + y2 + y1) / 4.0;
+        float b = (y4 + y3 - y2 - y1) / 4.0;
+        float c = (y4 - y3 + y2 - y1) / 4.0;
+        float d = (y4 - y3 - y2 + y1) / 4.0;
 
         /* Puts the DCT pixel on the stack */
         struct Dct_float newPixel = {
@@ -199,7 +199,7 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
         float y = -1;
         switch(yIndex) {
                 case 1:
-                y = a - b - c - d;
+                y = a - b - c + d;
                 break;
                 
                 case 2:

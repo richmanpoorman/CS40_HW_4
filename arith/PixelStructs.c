@@ -42,7 +42,7 @@ float clampToRange(float input, float lower, float upper)
 int   floatToInt(float input, int denominator, int lower, int upper)
 {
         
-        float scaled = round(input * denominator);
+        int scaled = (int)round(input * denominator);
 
         if (scaled > upper) {
                 return upper;
@@ -50,7 +50,7 @@ int   floatToInt(float input, int denominator, int lower, int upper)
         if (scaled < lower) {
                 return lower;
         }
-        return (int)scaled;
+        return scaled;
 }
 
 /*

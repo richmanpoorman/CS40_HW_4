@@ -7,7 +7,7 @@ IMAGES=("flowers" "animals" "desert" "erosion" "from-wind-cave" \
         "halligan" "twoByTwo" \
         "nOddMEven" "nOddMOdd" "nEvenMEven" "nEvenMOdd" \
         "blackSquare" "whiteSquare" "redSquare" "greenSquare" "blueSquare" \
-        "colorBar" "evilDitherTest" "gradient")
+        "colorBar" "evilDitherTest" "gradient" "monoDither")
 OUTPUT_PATH="Test/OutputFiles/"
 
 valgrindStep() {

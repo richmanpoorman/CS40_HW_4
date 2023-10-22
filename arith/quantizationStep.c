@@ -74,6 +74,9 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
         float     d        = data -> d;
         float     pb       = data -> pb;
         float     pr       = data -> pr;
+
+
+        
         struct Dct_int newPixel = {
                 aToBits(a), 
                 bcdToBits(b),
@@ -96,7 +99,9 @@ static int bcdToBits(float x)
 {
         float maxFloat = getMaxFloat();
         int   maxInt   = getBCDMaxValue();
-        int   result   = floatToInt(x, maxInt, -maxFloat, maxFloat);
+        
+        x = clampToRange(x, -maxFloat, maxFloat);
+        int   result   = floatToInt(x, maxInt, -maxInt, maxFloat);
 
         return result;
 }
@@ -108,7 +113,8 @@ static int bcdToBits(float x)
  *  Output    : An int representing the scaled luma value
  */
 static int aToBits(float a) 
-{
+{       
+
         int maxAInt = getAMaxValue();
         int result = floatToInt(a, maxAInt, 0, maxAInt);
         return result;
@@ -168,6 +174,9 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
         int     d          = data -> d;
         int     pb         = data -> pb;
         int     pr         = data -> pr;
+
+        fprintf(stderr, "D: %i -> %f\n", d, bcdToFloat(d));
+
         struct Dct_float newPixel = {
                 aToFloat(a),  
                 bcdToFloat(b),

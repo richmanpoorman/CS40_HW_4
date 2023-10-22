@@ -3,9 +3,9 @@
 #define numABits 9
 #define maxFloat 0.3
 
-#define maxInt (1 << numBCDBits)
+#define maxBCDInt (1 << numBCDBits)
 #define maxAInt (1 << numABits)
-#define scaleFactor (maxInt / maxFloat)
+#define scaleFactor (maxBCDInt / maxFloat)
 
 /*
  *  Name      : getMaxFloat
@@ -27,7 +27,7 @@ float getMaxFloat() {
  *              or d luma
  */
 int getBCDLength() {
-        return maxInt - 1;
+        return numBCDBits;
 }
 
 /*
@@ -38,7 +38,7 @@ int getBCDLength() {
  *  Output    : The largest int value that can be attributed to luma a
  */
 int getALength() {
-        return maxAInt - 1;
+        return numABits;
 }
 
 /*
@@ -50,6 +50,14 @@ int getALength() {
  *              b, c, and d from floats to ints */
 int getScaleFactor() {
         return scaleFactor;
+}
+
+int getAMaxValue() {
+        return maxAInt - 1;
+}
+
+int getBCDMaxValue() {
+        return maxBCDInt - 1;
 }
 
 #undef numBCDBits 

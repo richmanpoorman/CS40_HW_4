@@ -10,4 +10,5 @@ float getMaxFloat();
 int getBCDLength();
 int getALength();
 int getScaleFactor();
-
+int getAMaxValue();
+int getBCDMaxValue();

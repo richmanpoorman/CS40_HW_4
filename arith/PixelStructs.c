@@ -18,10 +18,10 @@ float intToFloat(int input, int denominator, float lower, float upper);
 float clampToRange(float input, float lower, float upper)
 {
         if (input < lower) {
-                input = lower;
+                return lower;
         }
         if (input > upper) {
-                input = upper;
+                return upper;
         }
         return input;
 }
@@ -37,6 +37,8 @@ float clampToRange(float input, float lower, float upper)
  *  Output    : (int) The value scaled by denominator, put into an 
  *                    int instead of a float
  */
+
+
 int   floatToInt(float input, int denominator, int lower, int upper)
 {
         
@@ -64,7 +66,7 @@ int   floatToInt(float input, int denominator, int lower, int upper)
  */
 float intToFloat(int input, int denominator, float lower, float upper)
 {
-        float value = 1.0 * input / denominator;
+        float value = (1.0 * input) / denominator;
         value = clampToRange(value, lower, upper);
         return value;
 }

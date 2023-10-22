@@ -68,12 +68,12 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
         Dct_float         data    = methods -> at(pixels, col, row);
 
         Dct_int inNewImage = ptr;
-        float     a          = data -> a;
-        float     b          = data -> b;
-        float     c          = data -> c;
-        float     d          = data -> d;
-        float     pb         = data -> pb;
-        float     pr         = data -> pr;
+        float     a        = data -> a;
+        float     b        = data -> b;
+        float     c        = data -> c;
+        float     d        = data -> d;
+        float     pb       = data -> pb;
+        float     pr       = data -> pr;
         struct Dct_int newPixel = {
                 aToBits(a), 
                 bcdToBits(b),
@@ -95,16 +95,9 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
 static int bcdToBits(float x)
 {
         float maxFloat = getMaxFloat();
-        int   maxInt   = getBCDLength();
+        int   maxInt   = getBCDMaxValue();
         int   result   = floatToInt(x, maxInt, -maxFloat, maxFloat);
-        /* scaleFactor = getScaleFactor();
-        if (x > maxFloat) {
-                return maxInt;
-        }
-        if (x < (-1 * maxFloat)) {
-                return -1 * maxInt;
-        }
-        int result = (int)(x  * scaleFactor); */
+
         return result;
 }
 
@@ -116,8 +109,8 @@ static int bcdToBits(float x)
  */
 static int aToBits(float a) 
 {
-        int maxAInt = getALength();
-        int result = floatToInt(a, maxAInt, -maxAInt, maxAInt);
+        int maxAInt = getAMaxValue();
+        int result = floatToInt(a, maxAInt, 0, maxAInt);
         return result;
 }
 
@@ -197,8 +190,7 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
 static float bcdToFloat(int x)
 {
         float maxFloat = getMaxFloat();
-        int   maxInt   = getBCDLength();
-        /* scaleFactor = getScaleFactor(); */
+        int   maxInt   = getBCDMaxValue();
         float result = intToFloat(x, maxInt, -maxFloat, maxFloat);
         return result;
 }
@@ -211,7 +203,7 @@ static float bcdToFloat(int x)
  */
 static float aToFloat(int a) 
 {
-        int   maxAInt = getALength();
+        int   maxAInt = getAMaxValue();
         float result  = intToFloat(a, maxAInt, 0.0, 1.0);
         return result;
 }

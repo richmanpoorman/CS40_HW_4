@@ -4,7 +4,7 @@
 #define width {9 , 5 , 5 , 5, 4, 4}
 #define lsb   {23, 18, 13, 8, 4, 0}
 
-#define maxFloat 0.3
+
 
 /*
  *  Name      : getALength
@@ -176,18 +176,6 @@ int getDMaxValue() {
         return (1 << dLength) - 1;
 }
 
-/*
- *  Name      : getMaxFloat
- *  Purpose   : Getter for the absolute value of the maximum float 
- *              representation for luma (after quantization)
- *  Parameters: None
- *  Output    : The largest float value that can be attributed to a luma
- */
-float getMaxFloat() {
-        return maxFloat;
-}
-
 
 #undef width
 #undef lsb
-#undef maxFloat 

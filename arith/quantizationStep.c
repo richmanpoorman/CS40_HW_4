@@ -7,6 +7,9 @@
 #include <arith40.h>
 #include "codewordInfo.h"
 
+
+#define maxFloat 0.3
+
 static void compress(Pnm_ppm image);
 static void decompress(Pnm_ppm image);
 
@@ -97,8 +100,6 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
  */
 static int bcdToBits(float x, int maxInt)
 {
-        float maxFloat = getMaxFloat();
-        
         x = clampToRange(x, -maxFloat, maxFloat);
         int   result   = floatToInt(x, maxInt, -maxInt, maxInt);
 
@@ -195,7 +196,6 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
  */
 static float bcdToFloat(int x, int maxInt)
 {
-        float maxFloat = getMaxFloat();
         float result = intToFloat(x, maxInt, -maxFloat, maxFloat);
         return result;
 }
@@ -219,3 +219,5 @@ static struct CompressionStep quantizationStepStruct = {
 };
 
 CompressionStep quantizationStep = &quantizationStepStruct;
+
+#undef maxFloat

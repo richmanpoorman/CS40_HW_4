@@ -60,7 +60,7 @@ int getBCDMaxValue() {
         return maxBCDInt - 1;
 }
 
-#undef numBCDBits 
+#undef numBCDBits  
 #undef numABits 
 #undef maxFloat
 

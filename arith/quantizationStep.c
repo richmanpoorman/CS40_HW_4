@@ -15,8 +15,8 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
 static void dequantize(int col, int row, A2Methods_UArray2 uarray2, 
                        A2Methods_Object *ptr, void *cl);
 
-static int   bcdToBits(float x);
-static float bcdToFloat(int x);
+static int   bcdToBits(float x, int maxInt);
+static float bcdToFloat(int x, int maxInt);
 
 static int   aToBits(float a);
 static float aToFloat(int a);
@@ -79,9 +79,9 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
         
         struct Dct_int newPixel = {
                 aToBits(a), 
-                bcdToBits(b),
-                bcdToBits(c),
-                bcdToBits(d),
+                bcdToBits(b, getBMaxValue()),
+                bcdToBits(c, getCMaxValue()),
+                bcdToBits(d, getDMaxValue()),
                 Arith40_index_of_chroma(pb),
                 Arith40_index_of_chroma(pr)
         };
@@ -95,13 +95,12 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
  *  Parameters: (float) y       =       The value to convert
  *  Output    : An int representing the scaled luma value
  */
-static int bcdToBits(float x)
+static int bcdToBits(float x, int maxInt)
 {
         float maxFloat = getMaxFloat();
-        int   maxInt   = getBCDMaxValue();
         
         x = clampToRange(x, -maxFloat, maxFloat);
-        int   result   = floatToInt(x, maxInt, -maxInt, maxFloat);
+        int   result   = floatToInt(x, maxInt, -maxInt, maxInt);
 
         return result;
 }
@@ -177,9 +176,9 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
 
         struct Dct_float newPixel = {
                 aToFloat(a),  
-                bcdToFloat(b),
-                bcdToFloat(c),
-                bcdToFloat(d),
+                bcdToFloat(b, getBMaxValue()),
+                bcdToFloat(c, getCMaxValue()),
+                bcdToFloat(d, getDMaxValue()),
                 Arith40_chroma_of_index(pb),
                 Arith40_chroma_of_index(pr)
         };
@@ -194,10 +193,9 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
  *  Parameters: (unsigned) x       =   The value to convert
  *  Output    : An float representing the scaled luma value
  */
-static float bcdToFloat(int x)
+static float bcdToFloat(int x, int maxInt)
 {
         float maxFloat = getMaxFloat();
-        int   maxInt   = getBCDMaxValue();
         float result = intToFloat(x, maxInt, -maxFloat, maxFloat);
         return result;
 }

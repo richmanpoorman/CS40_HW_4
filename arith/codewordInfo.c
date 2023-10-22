@@ -1,26 +1,10 @@
 
-#define widths {9, 4, 4, 4}
-#define numABits 9
-#define numBBits 4
-#define numCBits 4
-#define numDBits 4
+
+/* The Codeword table in the form {a, b, c, d, pb, pr} for width and lsb */
+#define width {9 , 5 , 5 , 5, 4, 4}
+#define lsb   {23, 18, 13, 8, 4, 0}
+
 #define maxFloat 0.3
-
-#define maxAInt (1 << numABits)
-#define maxBInt (1 << numBBits)
-#define maxCInt (1 << numCBits)
-#define maxDInt (1 << numDBits)
-
-/*
- *  Name      : getMaxFloat
- *  Purpose   : Getter for the absolute value of the maximum float 
- *              representation for luma
- *  Parameters: None
- *  Output    : The largest float value that can be attributed to a luma
- */
-float getMaxFloat() {
-        return maxFloat;
-}
 
 /*
  *  Name      : getALength
@@ -29,7 +13,8 @@ float getMaxFloat() {
  *  Output    : The number of bits used to represent luma a
  */
 int getALength() {
-        return numABits;
+        int codewordWidths [6] = width;
+        return codewordWidths[0];
 }
 
 /*
@@ -39,7 +24,8 @@ int getALength() {
  *  Output    : The number of bits used to represent luma b
  */
 int getBLength() {
-        return numBBits;
+       int codewordWidths [6] = width;
+        return codewordWidths[1];
 }
 
 /*
@@ -49,7 +35,8 @@ int getBLength() {
  *  Output    : The number of bits used to represent luma c
  */
 int getCLength() {
-        return numCBits;
+        int codewordWidths [6] = width;
+        return codewordWidths[2];
 }
 
 /*
@@ -59,7 +46,90 @@ int getCLength() {
  *  Output    : The number of bits used to represent luma d
  */
 int getDLength() {
-        return numCBits;
+        int codewordWidths [6] = width;
+        return codewordWidths[3];
+}
+
+/*
+ *  Name      : getPbLength
+ *  Purpose   : Getter for the number of bits used to represent pb
+ *  Parameters: None
+ *  Output    : The number of bits used to represent pb
+ */
+int getPbLength() {
+        int codewordWidths [6] = width;
+        return codewordWidths[4];
+}
+
+/*
+ *  Name      : getPrLength
+ *  Purpose   : Getter for the number of bits used to represent pr
+ *  Parameters: None
+ *  Output    : The number of bits used to represent pr
+ */
+int getPrLength() {
+        int codewordWidths [6] = width;
+        return codewordWidths[5];
+}
+
+/*
+ *  Name      : getALsb
+ *  Purpose   : Getter for the least significant bit of a in the codeword
+ *  Parameters: None
+ *  Output    : The bit place of the lsb of a
+ */
+int getALsb() {
+        int codewordLSBs [6] = width;
+        return codewordLSBs[0];
+}
+
+/*
+ *  Name      : getBLsb
+ *  Purpose   : Getter for the least significant bit of b in the codeword
+ *  Parameters: None
+ *  Output    : The bit place of the lsb of b
+ */
+int getBLsb() {
+        int codewordLSBs [6] = width;
+        return codewordLSBs[1];
+}
+
+/*
+ *  Name      : getCLsb
+ *  Purpose   : Getter for the least significant bit of c in the codeword
+ *  Parameters: None
+ *  Output    : The bit place of the lsb of c
+ */
+int getCLsb() {
+        int codewordLSBs [6] = width;
+        return codewordLSBs[2];
+}
+
+/*
+ *  Name      : getDLsb
+ *  Purpose   : Getter for the least significant bit of d in the codeword
+ *  Parameters: None
+ *  Output    : The bit place of the lsb of d
+ */
+int getDLsb() {
+        int codewordLSBs [6] = width;
+        return codewordLSBs[3];
+}
+
+/*
+ *  Name      : getPbLsb
+ *  Purpose   : Getter for the least significant bit of pb in the codeword
+ *  Parameters: None
+ *  Output    : The bit place of the lsb of pb
+ */
+int getPbLsb() {
+        int codewordLSBs [6] = width;
+        return codewordLSBs[4];
+}
+
+int getPrLsb() {
+        int codewordLSBs [6] = width;
+        return codewordLSBs[5];
 }
 
 /*
@@ -69,7 +139,8 @@ int getDLength() {
  *  Output    : The largest possible int used to represent luma a
  */
 int getAMaxValue() {
-        return maxAInt - 1;
+        unsigned aLength = getALength();
+        return (1 << aLength) - 1;
 }
 
 /*
@@ -79,7 +150,8 @@ int getAMaxValue() {
  *  Output    : The largest possible int used to represent luma b
  */
 int getBMaxValue() {
-        return maxBInt - 1;
+        unsigned bLength = getBLength();
+        return (1 << bLength) - 1;
 }
 
 /*
@@ -89,7 +161,8 @@ int getBMaxValue() {
  *  Output    : The largest possible int used to represent luma c
  */
 int getCMaxValue() {
-        return maxCInt - 1;
+        unsigned cLength = getCLength();
+        return (1 << cLength) - 1;
 }
 
 /*
@@ -99,17 +172,22 @@ int getCMaxValue() {
  *  Output    : The largest possible int used to represent luma d
  */
 int getDMaxValue() {
-        return maxDInt - 1;
+        unsigned dLength = getDLength();
+        return (1 << dLength) - 1;
+}
+
+/*
+ *  Name      : getMaxFloat
+ *  Purpose   : Getter for the absolute value of the maximum float 
+ *              representation for luma (after quantization)
+ *  Parameters: None
+ *  Output    : The largest float value that can be attributed to a luma
+ */
+float getMaxFloat() {
+        return maxFloat;
 }
 
 
-#undef numABits 
-#undef numBBits 
-#undef numCBits 
-#undef numDBits 
+#undef width
+#undef lsb
 #undef maxFloat 
-
-#undef maxAInt 
-#undef maxBInt
-#undef maxCInt 
-#undef maxDInt

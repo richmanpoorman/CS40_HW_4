@@ -7,11 +7,22 @@
  */
 
 float getMaxFloat();
+
 int getALength();
 int getBLength();
 int getCLength();
 int getDLength();
+int getPbLength();
+int getPrLength();
+
 int getAMaxValue();
 int getBMaxValue();
 int getCMaxValue();
 int getDMaxValue();
+
+int getALsb();
+int getBLsb();
+int getCLsb();
+int getDLsb();
+int getPbLsb();
+int getPrLsb();

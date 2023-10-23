@@ -30,9 +30,12 @@ bool Bitpack_fitsu(uint64_t n, unsigned width)
 bool Bitpack_fitss( int64_t n, unsigned width) 
 {
         assert(width <= MAX_WIDTH);
+        /* Can fit all data when we have the max amount of bits */
         if (width == MAX_WIDTH) {
                 return true;
         }
+
+        /* Can't fit anything because of the signed bit */
         if (width <= 1) {
                 return false;
         }
@@ -79,6 +82,8 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
         return maskGet;
 
 }
+
+#include <stdio.h>
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
 {
         assert(width <= MAX_WIDTH);
@@ -94,7 +99,7 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
          *  The cast here stays within range, as since it is taking
          *  width - 1, it will fit into a int64_t
          */
-        int64_t  value = (int64_t)Bitpack_getu(word, width - 1, lsb);
+        int64_t  value = (int64_t)Bitpack_getu(word, width, lsb);
         uint64_t sign  = Bitpack_getu(word, 1, lsb + width - 1);
         if (sign > 0) {
                 /*
@@ -103,7 +108,11 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
                  *  remove the 1's where the value is 0 as bits
                  */
                 int64_t zero = 0;
-                value = ~zero & value;
+                zero = ~zero;
+                /* Move the 1s bits over to copy in the value */
+                zero <<= width;
+                /* Make the values afterward 1s */
+                value = value | zero;
         }
         return value;
 }
@@ -164,10 +173,17 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
                       unsigned lsb,  int64_t value)
 {       
         assert(width <= MAX_WIDTH);
-        assert(width >= 1);
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
-
+        
+        /* 
+         * If value has nothing in it, then just don't put it in 
+         * Note that it is 1 because then we only have space for the sign
+         * bit at 1 width
+         */
+        if (width <= 1) {
+                return word;
+        }
         /* 
          * If it takes up the whole word, then just return it
          * Note that we do it this way, as the value doesn't fit into
@@ -177,6 +193,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
                 return value;
         }
 
+        /* Get rid of the excess 1s from 2's compliment */
         uint64_t unsignedValue = (uint64_t)value;
         unsignedValue <<= MAX_WIDTH - width;
         unsignedValue >>= MAX_WIDTH - width;

@@ -61,15 +61,15 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
 {
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = cl;
-        Dct_int         data    = methods -> at(pixels, col, row);
+        Dct_int           data    = methods -> at(pixels, col, row);
 
         Codeword inNewImage = ptr;
-        int      a         = data -> a;
-        int      b         = data -> b;
-        int      c         = data -> c;
-        int      d         = data -> d;
-        int      pb        = data -> pb;
-        int      pr        = data -> pr;
+        int      a          = data -> a;
+        int      b          = data -> b;
+        int      c          = data -> c;
+        int      d          = data -> d;
+        int      pb         = data -> pb;
+        int      pr         = data -> pr;
 
         int aLength  = getALength();
         int bLength  = getBLength();
@@ -103,7 +103,7 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
 
         assert(Bitpack_fitsu(pr, prLength));
         word = Bitpack_newu(word, prLength, prLsb, pr);
-        
+
         struct Codeword newPixel = {
                 word
         };

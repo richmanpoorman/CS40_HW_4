@@ -79,7 +79,7 @@ int getPrLength() {
  *  Output    : The bit place of the lsb of a
  */
 int getALsb() {
-        int codewordLSBs [6] = width;
+        int codewordLSBs [6] = lsb;
         return codewordLSBs[0];
 }
 
@@ -90,7 +90,7 @@ int getALsb() {
  *  Output    : The bit place of the lsb of b
  */
 int getBLsb() {
-        int codewordLSBs [6] = width;
+        int codewordLSBs [6] = lsb;
         return codewordLSBs[1];
 }
 
@@ -101,7 +101,7 @@ int getBLsb() {
  *  Output    : The bit place of the lsb of c
  */
 int getCLsb() {
-        int codewordLSBs [6] = width;
+        int codewordLSBs [6] = lsb;
         return codewordLSBs[2];
 }
 
@@ -112,7 +112,7 @@ int getCLsb() {
  *  Output    : The bit place of the lsb of d
  */
 int getDLsb() {
-        int codewordLSBs [6] = width;
+        int codewordLSBs [6] = lsb;
         return codewordLSBs[3];
 }
 
@@ -123,12 +123,12 @@ int getDLsb() {
  *  Output    : The bit place of the lsb of pb
  */
 int getPbLsb() {
-        int codewordLSBs [6] = width;
+        int codewordLSBs [6] = lsb;
         return codewordLSBs[4];
 }
 
 int getPrLsb() {
-        int codewordLSBs [6] = width;
+        int codewordLSBs [6] = lsb;
         return codewordLSBs[5];
 }
 

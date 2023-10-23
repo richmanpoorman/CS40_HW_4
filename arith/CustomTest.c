@@ -74,9 +74,13 @@ void getTests() {
 
 void widthOfOne() {
                 signed gets_negativeOne = Bitpack_gets(0xfff, 1, 1);
-                fprintf(stderr, "gets_test result: %i\n", gets_negativeOne);
+                fprintf(stderr, "here is a -1: %i\n", gets_negativeOne);
                 assert(gets_negativeOne == -1);
-                fprintf(stderr, "this is a -1! :)");
+
+                signed gets_zero = Bitpack_gets(0x000, 1, 1);
+                fprintf(stderr, "here is a 0: %i\n", gets_zero);
+                assert(gets_zero == 0);
+
 }
 
 void test(FILE *input, FILE *output)

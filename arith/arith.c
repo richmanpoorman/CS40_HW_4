@@ -12,6 +12,7 @@
 #include "DCTStep.h"
 #include "quantizationStep.h"
 #include "packingStep.h"
+#include "codewordIO.h"
 
 void compress40Output(FILE *input, FILE *output);
 void decompress40Output(FILE *input, FILE *output);
@@ -36,7 +37,7 @@ void compress40Output(FILE *input, FILE *output)
         assert(input != NULL && output != NULL);
         Pnm_ppm image = Pnm_ppmread(input, uarray2_methods_plain);
         compress40Image(image);
-        // TODO: use the compressed writer
+        writeCodewordFile(image, output);
         Pnm_ppmfree(&image);
 }
 
@@ -52,9 +53,10 @@ void compress40Output(FILE *input, FILE *output)
 void decompress40Output(FILE *input, FILE *output)
 {
         assert(input != NULL && output != NULL);
-        // TODO: use the compressed reader
-        (void) input;
-        (void) output;
+        Pnm_ppm image = readCodewordFile(input);
+        decompress40Image(image);
+        Pnm_ppmwrite(output, image);
+        Pnm_ppmfree(&image);
 }
 
 /*

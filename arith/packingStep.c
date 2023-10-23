@@ -105,7 +105,7 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
         word = Bitpack_newu(word, prLength, prLsb, pr);
 
         struct Codeword newPixel = {
-                word
+                (uint32_t)word
         };
         *inNewImage = newPixel;
         (void) uarray2;

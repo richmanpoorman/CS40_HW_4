@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "bitpack.h"
 
 
@@ -38,16 +39,32 @@ void onesCanGoIn() {
                 word = 0;
                 word = Bitpack_newu(word, wordSize, remainingSize / 2, value);
                 result = Bitpack_getu(word, wordSize, remainingSize / 2);
-                fprintf(stderr, "Value: %lu, Result: %lu\n", value, result);
-                assert(result == value);
-
+                //fprintf(stderr, "Value: %lu, Result: %lu\n", value, result);
+                assert(result == value);            
         }
+}
+
+void fitsuTests() {
+                bool fitsu_lowEdge_succeed = Bitpack_fitsu(0,3);
+                assert (fitsu_lowEdge_succeed == true);
+                
+                bool fitsu_middle_succeed = Bitpack_fitsu(5,3);
+                assert (fitsu_middle_succeed == true);
+               
+                bool fitsu_highEdge_succeed = Bitpack_fitsu(7,3);
+                assert (fitsu_highEdge_succeed == true);
+               
+                bool fitsu_lowEdge_fail = Bitpack_fitsu(-1,3);
+                assert (fitsu_lowEdge_fail == false);
+
+                bool fitsu_highEdge_fail = Bitpack_fitsu(8,3);
+                assert (fitsu_highEdge_fail == false);
 }
 
 void test(FILE *input, FILE *output)
 {
-        
-
+        onesCanGoIn();
+        fitsuTests();
         (void) input;
         (void) output;
 }

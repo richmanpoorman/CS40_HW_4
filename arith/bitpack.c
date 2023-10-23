@@ -190,7 +190,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
          * uint64_t otherwise
          */
         if (width == MAX_WIDTH) {
-                return value;
+                return (uint64_t)value;
         }
 
         /* Get rid of the excess 1s from 2's compliment */

@@ -26,6 +26,10 @@ comp40SelfCompare() {
         ./ppmdiff $1 $OUTPUT_PATH$imageOutput.ppm
 }
 
+ioStep() {
+        ./40image -c $1 | ./40image -d | ./ppmdiff $1 -
+}
+
 jpegComp40Compare() {
         touch $1.cs40Out
         touch $1.jpegOut
@@ -52,7 +56,8 @@ for image in "${IMAGES[@]}"; do
         echo JPEG vs Our Implementation
         jpegComp40Compare $OUTPUT_PATH$image.out
 
-        
+        echo FULL PROGRAM RUN:
+        ioStep $OUTPUT_PATH$image.out
 
         echo 
         rm $OUTPUT_PATH$image.out

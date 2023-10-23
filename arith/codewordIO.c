@@ -6,6 +6,7 @@
 #include "a2methods.h"
 #include "codewordInfo.h"
 #include "bitpack.h"
+#include "mem.h"
 
 Pnm_ppm readCodewordFile(FILE *input);
 void writeCodewordFile(Pnm_ppm codewordImage, FILE *output);
@@ -25,10 +26,21 @@ Pnm_ppm readCodewordFile(FILE *input)
         assert(c == '\n');
 
         A2Methods_T       methods = uarray2_methods_plain;
-        A2Methods_UArray2 image   = methods -> new(width, height, 
+        A2Methods_UArray2 pixels  = methods -> new(width, height, 
                                                    sizeof(Codeword));
         
-        methods -> map_row_major(image, readData, input);
+        methods -> map_row_major(pixels, readData, input);
+
+        struct Pnm_ppm imageData = {
+                .width       = width,
+                .height      = height,
+                .denominator = 1,
+                .pixels      = pixels,
+                .methods     = methods
+        };
+
+        Pnm_ppm image = ALLOC(sizeof(imageData));
+        *image = imageData;
 
         return image;
 }

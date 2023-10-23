@@ -1,6 +1,7 @@
 cs40 hw04 arith
 Matthew Wong (mwong14) and Ivi Fung (sfung02)
-References: 
+References: SAM THE GOAT FOR SAVING OUR MIDTERM GRADES (we did not understand
+2s complement whoops)
 Implementation:
 Files:
 Time: 

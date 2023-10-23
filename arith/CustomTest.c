@@ -61,10 +61,30 @@ void fitsuTests() {
                 assert (fitsu_highEdge_fail == false);
 }
 
+void getTests() {
+                unsigned getu_test = Bitpack_getu(0x3f4, 6, 2);
+                //fprintf(stderr, "getu_test result: %u\n", getu_test);
+
+                signed gets_test = Bitpack_gets(0x3f4, 6, 2);
+                //fprintf(stderr, "gets_test result: %i\n", gets_test);
+
+                assert(getu_test == 61);
+                assert(gets_test == -3);
+}
+
+void widthOfOne() {
+                signed gets_negativeOne = Bitpack_gets(0xfff, 1, 1);
+                fprintf(stderr, "gets_test result: %i\n", gets_negativeOne);
+                assert(gets_negativeOne == -1);
+                fprintf(stderr, "this is a -1! :)");
+}
+
 void test(FILE *input, FILE *output)
 {
         onesCanGoIn();
         fitsuTests();
+        getTests();
+        widthOfOne();
         (void) input;
         (void) output;
 }

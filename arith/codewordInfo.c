@@ -4,7 +4,7 @@
 #define width {9 , 5 , 5 , 5, 4, 4}
 #define lsb   {23, 18, 13, 8, 4, 0}
 
-
+#define numBytes 4
 
 /*
  *  Name      : getALength
@@ -176,6 +176,17 @@ int getDMaxValue() {
         return (1 << dLength) - 1;
 }
 
+/*
+ *  Name      : getNumBytes
+ *  Purpose   : Getter for the total byte size of the word
+ *  Parameters: None
+ *  Output    : The largest possible int used to represent luma d
+ */
+int getNumBytes()
+{
+        return numBytes;
+}
 
 #undef width
 #undef lsb
+#undef numBytes

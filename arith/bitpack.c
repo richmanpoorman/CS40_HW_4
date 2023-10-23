@@ -90,17 +90,18 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
         
-        /* If the data gotten is empty (including the signed bit) */
-        if (width <= 1) {
+        /* If the data gotten is empty */
+        if (width == 0) {
                 return 0;
         }
-
+        
         /* 
          *  The cast here stays within range, as since it is taking
          *  width - 1, it will fit into a int64_t
          */
         int64_t  value = (int64_t)Bitpack_getu(word, width, lsb);
         uint64_t sign  = Bitpack_getu(word, 1, lsb + width - 1);
+
         if (sign > 0) {
                 /*
                  *  If it is in the form of 2's complement,

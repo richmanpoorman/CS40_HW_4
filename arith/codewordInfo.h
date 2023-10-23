@@ -26,3 +26,5 @@ int getCLsb();
 int getDLsb();
 int getPbLsb();
 int getPrLsb();
+
+int getNumBytes();

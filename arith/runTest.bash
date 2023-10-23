@@ -22,7 +22,7 @@ jpegSelfCompare() {
 
 comp40SelfCompare() {
         touch $OUTPUT_PATH$imageOutput.ppm
-        valgrind ./testSteps $1 > $OUTPUT_PATH$imageOutput.ppm
+        ./testSteps $1 > $OUTPUT_PATH$imageOutput.ppm
         ./ppmdiff $1 $OUTPUT_PATH$imageOutput.ppm
 }
 

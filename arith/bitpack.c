@@ -23,7 +23,7 @@ bool Bitpack_fitsu(uint64_t n, unsigned width)
         if (width == MAX_WIDTH) {
                 return true;
         }
-        uint64_t maxValue = 1
+        uint64_t maxValue = 1;
         maxValue <<= width;
         return n < maxValue;
 }

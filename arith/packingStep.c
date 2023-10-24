@@ -1,3 +1,10 @@
+/* 
+ *   Name       : packingStep.c
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Module for packing and unpacking codewords
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <pnm.h>
 #include <a2plain.h>
 #include "CompressionStep.h"

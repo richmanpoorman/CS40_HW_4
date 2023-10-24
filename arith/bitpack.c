@@ -1,3 +1,10 @@
+/* 
+ *   Name       : bitpack.c
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Manipulates the fields of a 64 bit word
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <stdbool.h>
 #include <stdint.h>
 

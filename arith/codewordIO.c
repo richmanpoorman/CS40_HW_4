@@ -56,6 +56,17 @@ Pnm_ppm readCodewordFile(FILE *input)
         return image;
 }
 
+/*
+ *  Name      : readData
+ *  Purpose   : Reads image data one codeword at a time
+ *  Parameters: (int)                col     = The current column to copy
+ *              (int)                row     = The current row to copy
+ *              (A2Methods_UArray2)  uarray2 = The new array to copy into
+ *              (A2Methods_Object *) ptr     = The codeword to read
+ *              (void *)             cl      = The input file
+ *  Output    : (None)
+ *  Notes     : Prints a codeword to the given file in big endian order
+ */
 static void readData(int col, int row, A2Methods_UArray2 uarray2, 
                       A2Methods_Object *ptr, void *cl)
 {
@@ -93,6 +104,13 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
 
 }
 
+/*
+ *  Name      : writeCodewordFile
+ *  Purpose   : Writes a file containing codewords for a compressed image
+ *  Parameters: (FILE)               outut   = The file to write to
+ *  Output    : (None)
+ *  Notes     : Writes a file containing codewords in big endian format
+ */
 void writeCodewordFile(Pnm_ppm codewordImage, FILE *output)
 {
         unsigned int width  = codewordImage -> width * 2;
@@ -109,7 +127,7 @@ void writeCodewordFile(Pnm_ppm codewordImage, FILE *output)
 /*
  *  Name      : writeData
  *  Purpose   : Copy the old image data into the new image data 
- *              going from DCT int to DCT float
+ *              one codeword at a time
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
@@ -141,7 +159,6 @@ static void writeData(int col, int row, A2Methods_UArray2 uarray2,
                 fprintf(output, "%c", currByte);
         }
 
-        
         (void) col;
         (void) row;
         (void) uarray2;

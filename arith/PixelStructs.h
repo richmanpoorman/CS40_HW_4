@@ -1,3 +1,12 @@
+/* 
+ *   Name       : PixelStructs.h
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Defines the representations of values stored in each
+ *                pixel of an image during each compression step, as well
+ *                as helper functions to keep these values in range
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <stdint.h>
 
 #ifndef PIXEL_STRUCTS_H_

@@ -1,3 +1,10 @@
+/* 
+ *   Name       : compress40.c
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Wrapper for calls to compression and decompression
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <stdio.h>
 #include "arith.h"
 

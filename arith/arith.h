@@ -4,6 +4,7 @@
  *   Purpose    : Coordinates the sequencing of each compression step
  *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
  */
+ 
 #include <stdio.h>
 #include <pnm.h>
 

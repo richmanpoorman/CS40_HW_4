@@ -1,9 +1,36 @@
 cs40 hw04 arith
 Matthew Wong (mwong14) and Ivi Fung (sfung02)
+
 References: SAM THE GOAT FOR SAVING OUR MIDTERM GRADES (we did not understand
-2s complement whoops)
-Implementation:
-Files:
+two's complement whoops)
+
+Implementation Notes: To our knowledge, we have implemented every aspect of
+the spec correctly.
+
+File Architecture:
+Structural/sequencing files...
+        -40image.c: contains main
+        -arith.c/h: master sequencer for each compression step
+        -bitpack.c: manipulates bitfields for a 64-bit word
+        -codewordInfo.c/h: holds information about the field sizes and lsb for
+        codeword packing
+        -CompressionStep.c/h: stuct representing a compression step
+        that holds opponent processes (compress vs. decompress)
+        -compress40.c: handles calls for compression and decompression
+        -PixelStructs.c/h: holds the representations of values stored in each
+        pixel of an image during each compression step
+Compression steps...
+        -trimStep.c/h: module that trims an image to have even dimensions
+        -rgbIntToFloatStep.c/h: module that converts RGB ints to RGB floats
+        and vice versa
+        -rgbToCieStep.c/h: module that converts RGB floats to CIE floats
+        and vice versa
+        -DCTStep.c/h: module that performs DCT and inverse DCT
+        -quantizationStep.c/h: module that quantizes and dequantizes
+        chroma and luma
+        -packingStep.c/h: module that packs and unpacks the codewords
+        -codeweordIO.c/h: module that reads and writes codewords
+
 Time: 
         - Problem Analysis: 6h
-        - Problem Solving: 14h
+        - Problem Solving: 24h

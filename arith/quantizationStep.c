@@ -40,15 +40,21 @@ static float aToFloat(int a);
  *              values being Dct_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
  *              trimmed image (if necessary)
+ *              Will CRE if given a null image, or the values are null
  */
 static void compress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+
+        assert (pixels != NULL);
+
         int               size        = sizeof(struct Dct_int);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
         
@@ -139,15 +145,19 @@ static int aToBits(float a)
  *              values being Dct_int structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
  *              trimmed image (if necessary)
+ *              Will CRE if given a null image, or the values are null
  */
 static void decompress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+        assert(pixels != NULL);
         int               size        = sizeof(struct Dct_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
 
@@ -172,11 +182,19 @@ static void decompress(Pnm_ppm image)
 static void dequantize(int col, int row, A2Methods_UArray2 uarray2, 
                        A2Methods_Object *ptr, void *cl)
 {
+
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = cl;
-        Dct_int           data    = methods -> at(pixels, col, row);
+        
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
 
+        Dct_int   data       = methods -> at(pixels, col, row);
         Dct_float inNewImage = ptr;
+
+        assert(data != NULL)
+
+        
         int     a          = data -> a;
         int     b          = data -> b;
         int     c          = data -> c;

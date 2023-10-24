@@ -48,16 +48,20 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Rgb_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
- *              trimmed image (if necessary)
+ *              CIE image (if necessary)
+ *              Will CRE if given a null image, or the values are null
  */
 static void compress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+        assert(pixels != NULL);
         int               size        = sizeof(struct Cie_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
         
@@ -85,9 +89,15 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
 
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = cl;
-        Rgb_float         data    = methods -> at(pixels, col, row);
 
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
+
+        Rgb_float data       = methods -> at(pixels, col, row);
         Cie_float inNewImage = ptr;
+
+        assert(data != NULL);
+
         float     r          = data -> red;
         float     g          = data -> green;
         float     b          = data -> blue;
@@ -113,16 +123,20 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Cie_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
- *              trimmed image (if necessary)
+ *              RGB image (if necessary)
+ *              Will CRE if given a null image, or the values are null
  */
 static void decompress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+        assert(pixels != NULL);
         int               size        = sizeof(struct Rgb_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
 
@@ -149,9 +163,15 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
 {
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = cl;
-        Cie_float         data    = methods -> at(pixels, col, row);
 
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
+
+        Cie_float data       = methods -> at(pixels, col, row);
         Rgb_float inNewImage = ptr;
+
+        assert(data != NULL);
+
         float     y          = data -> y;
         float     pb         = data -> pb;
         float     pr         = data -> pr;

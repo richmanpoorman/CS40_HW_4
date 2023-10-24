@@ -26,15 +26,19 @@ static void unpack(int col, int row, A2Methods_UArray2 uarray2,
  *              values being Dct_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
  *              Codeword image (if necessary)
+ *              Will CRE if given a null image, or the values are null
  */
 static void compress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+        assert(pixels != NULL);
         int               size        = sizeof(struct Dct_int);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
         
@@ -70,7 +74,6 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
         Codeword inNewImage = ptr;
 
         assert(data != NULL);
-        assert(inNewImage != NULL);
 
         int      a          = data -> a;
         int      b          = data -> b;
@@ -128,15 +131,18 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
  *              values being Dct_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
  *              Dct_int image (if necessary)
+ *              Will CRE if given a null image, or the values are null
  */
 static void decompress(Pnm_ppm image)
 {
+        assert(image != NULL);
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+        assert(pixels != NULL);
         int               size        = sizeof(struct Dct_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
 
@@ -171,7 +177,6 @@ static void unpack(int col, int row, A2Methods_UArray2 uarray2,
         Dct_int  inNewImage = ptr;
         
         assert(data != NULL);
-        assert(inNewImage != NULL);
 
         uint64_t word       = data -> codeword;
 

@@ -24,6 +24,7 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
  *              values being Pnm_rgb structs (no way to check :( );
  *              Will CRE if can not allocate new memory;
  *              Will change the width and height of the image
+ *              Will CRE if given a null image, or the values are null
  */
 static void compress(Pnm_ppm image)
 {
@@ -37,6 +38,7 @@ static void compress(Pnm_ppm image)
         A2Methods_T methods = uarray2_methods_plain;
         
         A2Methods_UArray2 pixels   = image -> pixels;
+        assert(pixels != NULL);
         int               size     = sizeof(struct Dct_float);
         A2Methods_UArray2 newImage = methods -> new(newWidth, newHeight, size);
         
@@ -68,9 +70,12 @@ static void compress(Pnm_ppm image)
 static void cieToDct(int col, int row, A2Methods_UArray2 uarray2, 
                      A2Methods_Object *ptr, void *cl)
 {
-
         A2Methods_T       methods    = uarray2_methods_plain;
         A2Methods_UArray2 pixels     = cl;
+
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
+
         Dct_float         inNewImage = ptr;
 
         int oldCol = col * 2;
@@ -81,6 +86,11 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
         Cie_float topRight = methods -> at(pixels, oldCol + 1, oldRow    );
         Cie_float botLeft  = methods -> at(pixels, oldCol    , oldRow + 1);
         Cie_float botRight = methods -> at(pixels, oldCol + 1, oldRow + 1);
+
+        assert(topLeft != NULL);
+        assert(topRight != NULL);
+        assert(botLeft != NULL);
+        assert(botRight != NULL);
 
         /* Gets the average of the 2x2 block for pb and pr */
         float pbAverage = (
@@ -133,6 +143,7 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
  *              values being Rgb_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory;
  *              Will change the width and height of the image
+ *              Will CRE if given a null image, or the values are null
  */
 static void decompress(Pnm_ppm image)
 {
@@ -148,6 +159,7 @@ static void decompress(Pnm_ppm image)
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels   = image -> pixels;
+        assert(pixels != NULL);
         int               size     = sizeof(struct Cie_float);
         A2Methods_UArray2 newImage = methods -> new(newWidth, newHeight, size);
 
@@ -183,14 +195,17 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
         A2Methods_UArray2 pixels     = cl;
         Cie_float         inNewImage = ptr;
 
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
+
         int oldCol = col / 2;
         int oldRow = row / 2;
-
-        
 
         Dct_float data   = methods -> at(pixels, oldCol, oldRow); 
         int       yIndex = (col % 2) + 2 * (row % 2) + 1;
         
+        assert(data != NULL);
+
         float a = data -> a;
         float b = data -> b;
         float c = data -> c;

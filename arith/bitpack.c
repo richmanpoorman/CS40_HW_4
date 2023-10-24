@@ -58,7 +58,7 @@ bool Bitpack_fitsu(uint64_t n, unsigned width)
  *  Output    : (bool) True if the number can fit in width bits, false 
  *                     if it can not
  *  Notes     : Will CRE if given a width greater than 64
- *              Will not let anything fit in 0 bits, but will fit
+ *              Will only put 0 for width 0, but will fit
  *                      [-1, 0] in 1 bit
  */
 bool Bitpack_fitss( int64_t n, unsigned width) 
@@ -70,8 +70,8 @@ bool Bitpack_fitss( int64_t n, unsigned width)
         }
 
         /* Can't fit anything in 0-bits */
-        if (width < 1) {
-                return false;
+        if (width == 0) {
+                return n == 0;
         }
         /* The compliment takes the same amount of space for bits */
         if (n < 0) { 

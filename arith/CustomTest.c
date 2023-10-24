@@ -84,14 +84,17 @@ void widthOfOne() {
 }
 
 void sanityCheck() {
-        // uint64_t word = 0x3f4;
-        // unsigned w = 6;
-        // unsigned lsb = 2;
-        // uint64_t val = 3;
-        // unsigned lsb2 = 9;       
-        // assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w, lsb) == val);
-        // assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w2, lsb2) == Bitpack_getu(word, w2, lsb2));
+        uint64_t word = 0x3f4;
+        unsigned w = 6;
+        unsigned w2 = 8;
+        unsigned lsb = 2;
+        uint64_t val = 3;
+        unsigned lsb2 = 9;       
+        assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w, lsb) == val);
+        assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w2, lsb2) == Bitpack_getu(word, w2, lsb2));
+        printf("this is ok\n");
 }
+
 
 void test(FILE *input, FILE *output)
 {
@@ -99,6 +102,7 @@ void test(FILE *input, FILE *output)
         fitsuTests();
         getTests();
         widthOfOne();
+        sanityCheck();
         (void) input;
         (void) output;
 }

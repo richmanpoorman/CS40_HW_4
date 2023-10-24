@@ -201,6 +201,10 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
 
+        if (not Bitpack_fitsu(value, width)) {
+                RAISE(Bitpack_Overflow);
+        }
+
         if (width == MAX_WIDTH) {
                 return value;
         }
@@ -279,6 +283,10 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
         
+        if (not Bitpack_fitss(value, width)) {
+                RAISE(Bitpack_Overflow);
+        }
+
         /* 
          * If value has nothing in it, then just don't put it in 
          * Note that it is 1 because then we only have space for the sign

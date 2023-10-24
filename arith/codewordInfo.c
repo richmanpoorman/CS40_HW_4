@@ -1,11 +1,11 @@
-
+#include <stdint.h>
 
 /* The Codeword table in the form {a, b, c, d, pb, pr} for width and lsb */
 #define width {9 , 5 , 5 , 5, 4, 4}
 #define lsb   {23, 18, 13, 8, 4, 0}
  
 #define numBytes 4 
-
+#define MAX_SIZE 64
 /*
  *  Name      : getALength
  *  Purpose   : Getter for the number of bits used to represent luma a 
@@ -138,8 +138,14 @@ int getPrLsb() {
  *  Parameters: None
  *  Output    : The largest possible int used to represent luma a
  */
-int getAMaxValue() {
-        unsigned aLength = getALength();
+uint64_t getAMaxValue() {
+        int aLength = getALength();
+
+        if (aLength == MAX_SIZE) {
+                uint64_t allOnes = 0;
+                return ~allOnes;
+        }
+
         return (1 << aLength) - 1;
 }
 
@@ -149,8 +155,15 @@ int getAMaxValue() {
  *  Parameters: None
  *  Output    : The largest possible int used to represent luma b
  */
-int getBMaxValue() {
-        unsigned bLength = getBLength();
+uint64_t getBMaxValue() {
+
+        int bLength = getBLength();
+
+        if (bLength == MAX_SIZE) {
+                uint64_t allOnes = 0;
+                return ~allOnes;
+        }
+        
         return (1 << bLength) - 1;
 }
 
@@ -160,8 +173,14 @@ int getBMaxValue() {
  *  Parameters: None
  *  Output    : The largest possible int used to represent luma c
  */
-int getCMaxValue() {
-        unsigned cLength = getCLength();
+uint64_t getCMaxValue() {
+        int cLength = getCLength();
+
+        if (cLength == MAX_SIZE) {
+                uint64_t allOnes = 0;
+                return ~allOnes;
+        }
+
         return (1 << cLength) - 1;
 }
 
@@ -171,8 +190,14 @@ int getCMaxValue() {
  *  Parameters: None
  *  Output    : The largest possible int used to represent luma d
  */
-int getDMaxValue() {
-        unsigned dLength = getDLength();
+uint64_t getDMaxValue() {
+        int dLength = getDLength();
+
+        if (dLength == MAX_SIZE) {
+                uint64_t allOnes = 0;
+                return ~allOnes;
+        }
+
         return (1 << dLength) - 1;
 }
 
@@ -190,3 +215,4 @@ int getNumBytes()
 #undef width
 #undef lsb
 #undef numBytes
+#undef MAX_SIZE

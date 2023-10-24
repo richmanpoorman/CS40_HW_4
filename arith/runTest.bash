@@ -27,7 +27,7 @@ comp40SelfCompare() {
 }
 
 ioStep() {
-        ./40image -c $1 | ./40image -d | ./ppmdiff $1 -
+        valgrind ./40image -c $1 | valgrind ./40image -d | ./ppmdiff $1 -
 }
 
 jpegComp40Compare() {

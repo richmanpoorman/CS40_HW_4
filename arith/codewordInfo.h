@@ -6,6 +6,8 @@
  *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
  */
 
+#include <stdint.h>
+
 float getMaxFloat();
 
 int getALength();
@@ -15,10 +17,10 @@ int getDLength();
 int getPbLength();
 int getPrLength();
 
-int getAMaxValue();
-int getBMaxValue();
-int getCMaxValue();
-int getDMaxValue();
+uint64_t getAMaxValue();
+uint64_t getBMaxValue();
+uint64_t getCMaxValue();
+uint64_t getDMaxValue();
 
 int getALsb();
 int getBLsb();

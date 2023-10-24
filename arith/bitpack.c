@@ -15,6 +15,9 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
                       unsigned lsb, uint64_t value);
 uint64_t Bitpack_news(uint64_t word, unsigned width, 
                       unsigned lsb,  int64_t value);
+static uint64_t leftShift(uint64_t word, unsigned count);
+static uint64_t rightShift(uint64_t word, unsigned count);
+static uint64_t complement(uint64_t word);
 
 /* Implementation */
 bool Bitpack_fitsu(uint64_t n, unsigned width) 
@@ -23,8 +26,7 @@ bool Bitpack_fitsu(uint64_t n, unsigned width)
         if (width == MAX_WIDTH) {
                 return true;
         }
-        uint64_t maxValue = 1;
-        maxValue <<= width;
+        uint64_t maxValue = leftShift(1, width);
         return n < maxValue;
 }
 bool Bitpack_fitss( int64_t n, unsigned width) 
@@ -35,13 +37,13 @@ bool Bitpack_fitss( int64_t n, unsigned width)
                 return true;
         }
 
-        /* Can't fit anything because of the signed bit */
-        if (width <= 1) {
+        /* Can only fit 0 in 0-bits */
+        if (width < 1) {
                 return false;
         }
         /* The compliment takes the same amount of space for bits */
         if (n < 0) { 
-                n = ~n;
+                n = (int64_t)complement((uint64_t)n);
         }
         /* Saves 1 bit for the sign, then checks if the value can fit */
         return Bitpack_fitsu(n, width - 1);
@@ -59,31 +61,29 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
         }
 
         /* Get a line of all 1s */
-        uint64_t mask = 0;
-        mask = ~mask;
+        uint64_t mask = complement(0);
         
         /* 
          *  Only want (width) amount of 1s, so get rid of 
          *  MAX_WIDTH - (width) amount of 1s (as we start with MAX_WIDTH 1s)
          */
-        mask >>= MAX_WIDTH - width;
+        mask = rightShift(mask, MAX_WIDTH - width);
 
         /* 
          *  We need the mask to align with the position in the word, which
          *  is (lsb) bits over to the left
          */
-        mask <<= lsb;
+        mask = leftShift(mask, lsb);
 
         /* Retrieve the data from the word */
         uint64_t maskGet = word & mask;
 
         /* We have the data, but it is shifted (lsb) over, so we unshift */
-        maskGet >>= lsb;
+        maskGet = rightShift(maskGet, lsb);
         return maskGet;
 
 }
 
-#include <stdio.h>
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
 {
         assert(width <= MAX_WIDTH);
@@ -108,12 +108,11 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
                  *  then instead we start with all 1's and 
                  *  remove the 1's where the value is 0 as bits
                  */
-                int64_t zero = 0;
-                zero = ~zero;
+                int64_t allOnes = (int64_t)complement(0);
                 /* Move the 1s bits over to copy in the value */
-                zero <<= width;
+                allOnes = (int64_t)leftShift((uint64_t)allOnes, width);
                 /* Make the values afterward 1s */
-                value = value | zero;
+                value = value | allOnes;
         }
         return value;
 }
@@ -124,27 +123,27 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
 
-        uint64_t mask = 0;
-        mask = ~mask;
+        uint64_t mask = complement(0);
         
         /* 
          *  Only want (width) amount of 1s, so get rid of 
          *  MAX_WIDTH - (width) amount of 1s (as we start with MAX_WIDTH 1s)
          */
-        mask >>= MAX_WIDTH - width;
+        mask = rightShift(mask, MAX_WIDTH - width);
 
         uint64_t clearMask = mask;
         /* 
          *  We need the mask to align with the position in the word, which
          *  is (lsb) bits over to the left
          */
-        clearMask <<= lsb;
+        clearMask = leftShift(mask, lsb);
+        
 
         /* 
          * Want to clear out the 1s, so we can use the compliment 
          * to make all 1s except where we are putting it in
          */
-        clearMask = ~clearMask;
+        clearMask = complement(clearMask);
         word = word & clearMask;
 
         /* 
@@ -158,7 +157,7 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
          *  We need the mask to align with the position in the word, which
          *  is (lsb) bits over to the left
          */
-        mask <<= lsb;
+        mask = leftShift(mask, lsb);
 
         /* 
          *  Then, since it is cleared out by the steps above, 
@@ -196,10 +195,36 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
 
         /* Get rid of the excess 1s from 2's compliment */
         uint64_t unsignedValue = (uint64_t)value;
-        unsignedValue <<= MAX_WIDTH - width;
-        unsignedValue >>= MAX_WIDTH - width;
+        unsignedValue = leftShift(unsignedValue, MAX_WIDTH - width);
+        unsignedValue = rightShift(unsignedValue, MAX_WIDTH - width);
 
         return Bitpack_newu(word, width, lsb, unsignedValue);
+}
+
+static uint64_t leftShift(uint64_t word, unsigned count)
+{
+        if (count == 0) {
+                return word;
+        }
+        if (count >= MAX_WIDTH) {
+                return 0;
+        }
+        return word << count;
+        
+}
+static uint64_t rightShift(uint64_t word, unsigned count)
+{
+        if (count == 0) {
+                return word;
+        }
+        if (count >= MAX_WIDTH) {
+                return 0;
+        }
+        return word >> count;
+}
+static uint64_t complement(uint64_t word)
+{
+        return ~word;
 }
 
 #undef MAX_WIDTH

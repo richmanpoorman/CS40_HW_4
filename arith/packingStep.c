@@ -123,7 +123,7 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
         word = Bitpack_newu(word, prLength, prLsb, pr);
 
         struct Codeword newPixel = {
-                (uint32_t)word
+                word
         };
         *inNewImage = newPixel;
         (void) uarray2;
@@ -185,7 +185,7 @@ static void unpack(int col, int row, A2Methods_UArray2 uarray2,
         
         assert(data != NULL);
 
-        uint64_t word       = data -> codeword;
+        uint64_t word = data -> codeword;
 
         int aLength  = getALength();
         int bLength  = getBLength();

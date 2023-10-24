@@ -5,7 +5,9 @@ References: SAM THE GOAT FOR SAVING OUR MIDTERM GRADES (we did not understand
 two's complement whoops)
 
 Implementation Notes: To our knowledge, we have implemented every aspect of
-the spec correctly.
+the spec correctly. We also note in Codeword, we don't cast explicitly to 
+int32_t because we may want to shift it to using a int64_t. Also, other 
+structs use ints, as to match the Pnm_rgb having ints.
 
 File Architecture:
 Structural/sequencing files...

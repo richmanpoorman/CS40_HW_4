@@ -31,15 +31,19 @@ static void toInt(int col, int row, A2Methods_UArray2 uarray2,
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Pnm_rgb structs (no way to check :( );
  *              Will CRE if can not allocate new memory
+ *              Will CRE if given a null image, or the values are null
  */
 static void compress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+        assert(pixels != NULL);
         int               size        = sizeof(struct Rgb_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
         
@@ -71,10 +75,19 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
 
         A2Methods_T       methods     = uarray2_methods_plain;
         Pnm_ppm           image       = cl;
+
+        assert(image != NULL);
+
         A2Methods_UArray2 pixels      = image -> pixels;
         int               denominator = image -> denominator;
+
+        assert(pixels != NULL);
+
         Pnm_rgb           data        = methods -> at(pixels, col, row);
         Rgb_float         inNewImage  = ptr;
+
+        assert(data != NULL);
+
         struct Rgb_float newPixel = {
                 intToFloat(data -> red  , denominator, 0, 1),
                 intToFloat(data -> green, denominator, 0, 1),
@@ -94,15 +107,19 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Rgb_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory
+ *              Will CRE if given a null image, or the values are null
  */
 static void decompress(Pnm_ppm image)
 {
+        assert(image != NULL);
+
         int width  = image -> width;
         int height = image -> height;
 
         A2Methods_T methods = uarray2_methods_plain;
 
         A2Methods_UArray2 pixels      = image -> pixels;
+        assert(pixels != NULL);
         int               size        = sizeof(struct Pnm_rgb);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
 
@@ -129,10 +146,17 @@ static void decompress(Pnm_ppm image)
 static void toInt(int col, int row, A2Methods_UArray2 uarray2, 
                   A2Methods_Object *ptr, void *cl)
 {
+        
         A2Methods_T       methods     = uarray2_methods_plain;
         A2Methods_UArray2 pixels      = cl;
+
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
+
         Rgb_float         data        = methods -> at(pixels, col, row);
         Pnm_rgb           inNewImage  = ptr;
+
+        assert(data != NULL);
 
         struct Pnm_rgb newPixel = {
                 floatToInt(data -> red  , intDenominator, 0, intDenominator),

@@ -3,8 +3,8 @@
 /* The Codeword table in the form {a, b, c, d, pb, pr} for width and lsb */
 #define width {9 , 5 , 5 , 5, 4, 4}
 #define lsb   {23, 18, 13, 8, 4, 0}
-
-#define numBytes 4
+ 
+#define numBytes 4 
 
 /*
  *  Name      : getALength

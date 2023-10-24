@@ -25,22 +25,20 @@ Pnm_ppm readCodewordFile(FILE *input)
         int c = getc(input);
         assert(c == '\n');
 
+        width  /= 2;
+        height /= 2;
+        int size = sizeof(struct Codeword);
         A2Methods_T       methods = uarray2_methods_plain;
-        A2Methods_UArray2 pixels  = methods -> new(width, height, 
-                                                   sizeof(Codeword));
+        A2Methods_UArray2 pixels  = methods -> new(width, height, size);
         
         methods -> map_row_major(pixels, readData, input);
 
-        struct Pnm_ppm imageData = {
-                .width       = width,
-                .height      = height,
-                .denominator = 1,
-                .pixels      = pixels,
-                .methods     = methods
-        };
-
-        Pnm_ppm image = ALLOC(sizeof(imageData));
-        *image = imageData;
+        Pnm_ppm image = ALLOC(sizeof(*image));
+        image -> width       = width;
+        image -> height      = height;
+        image -> denominator = 1;
+        image -> pixels      = pixels;
+        image -> methods     = methods;
 
         return image;
 }
@@ -54,25 +52,25 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
         assert(input != NULL);
         assert(codeword != NULL);
 
-        uint32_t word     = 0;
+        uint64_t word     = 0;
         int      numBytes = getNumBytes();
         int      byteSize = sizeof(char);
 
-        for (int byte = 0; byte < numBytes; byte++) {
+        for (int byte = numBytes - 1; byte >= 0; byte--) {
                 assert(feof(input) == 0);
                 assert(ferror(input) == 0);
                 
-                char currByte = getc(input);
+                unsigned int currByte = getc(input);
                 assert(ferror(input) == 0);
 
-                Bitpack_newu(word, byteSize * 8, byte * byteSize * 8, 
-                             (uint64_t)currByte);
+                word = Bitpack_newu(word, byteSize * 8, byte * byteSize * 8, 
+                                    currByte);
         }
         assert(ferror(input) == 0);
-
         struct Codeword newPixel = {
                 (uint32_t)word
         };
+
 
         *codeword = newPixel;
         (void) col;
@@ -83,15 +81,15 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
 
 void writeCodewordFile(Pnm_ppm codewordImage, FILE *output)
 {
-        unsigned int width  = codewordImage -> width;
-        unsigned int height = codewordImage -> height; 
+        unsigned int width  = codewordImage -> width * 2;
+        unsigned int height = codewordImage -> height * 2; 
         fprintf(output, "COMP40 Compressed image format 2\n%u %u\n", 
                 width, height);
 
         A2Methods_T       methods = uarray2_methods_plain;
-        A2Methods_UArray2 image   = codewordImage -> pixels;
+        A2Methods_UArray2 pixels  = codewordImage -> pixels;
 
-        methods -> map_row_major(image, writeData, output);
+        methods -> map_row_major(pixels, writeData, output);
 }
 
 /*
@@ -121,13 +119,15 @@ static void writeData(int col, int row, A2Methods_UArray2 uarray2,
         int      numBytes = getNumBytes();
         int      byteSize = sizeof(char);
 
-        for (int byte = 0; byte < numBytes; byte++) {
+        for (int byte = numBytes - 1; byte >= 0; byte--) {
                 
-                char currByte = (char)Bitpack_getu(word, byteSize * 8, 
-                                                   byte * byteSize * 8);
+                unsigned int currByte = (unsigned int)Bitpack_getu(
+                                                word, byteSize * 8, 
+                                                byte * byteSize * 8);
                 fprintf(output, "%c", currByte);
         }
 
+        
         (void) col;
         (void) row;
         (void) uarray2;

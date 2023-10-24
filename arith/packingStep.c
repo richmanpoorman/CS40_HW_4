@@ -19,13 +19,13 @@ static void unpack(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : compress
- *  Purpose   : Convert the DCT float image into a DCT int image
- *  Parameters: (Pnm_ppm) image = Image with Dct_floats as pixels
+ *  Purpose   : Pack the Dct_int values into Codeword pixels
+ *  Parameters: (Pnm_ppm) image = Image with Dct_ints as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
  *              values being Dct_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
- *              trimmed image (if necessary)
+ *              Codeword image (if necessary)
  */
 static void compress(Pnm_ppm image)
 {
@@ -45,25 +45,33 @@ static void compress(Pnm_ppm image)
 }
 
 /*
- *  Name      : quantize
- *  Purpose   : Copy the old image data into the new image data
- *              going from DCT float to DCT int
+ *  Name      : pack
+ *  Purpose   : Packs the DCT int pixel into 32 bits
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
- *              (A2Methods_Object *) ptr     = The DCT value in the new array
- *              (void *)             cl      = The DCT float image
+ *              (A2Methods_Object *) ptr     = The Codeword value in the 
+ *                                             new array
+ *              (void *)             cl      = The DCT int image
  *  Output    : (None)
- *  Notes     : Converts the RGB float to CIE float
+ *  Notes     : Converts the DCT int to Codeword
  */
 static void pack(int col, int row, A2Methods_UArray2 uarray2, 
                      A2Methods_Object *ptr, void *cl)
 {
+        
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = cl;
-        Dct_int           data    = methods -> at(pixels, col, row);
 
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
+
+        Dct_int  data       = methods -> at(pixels, col, row);
         Codeword inNewImage = ptr;
+
+        assert(data != NULL);
+        assert(inNewImage != NULL);
+
         int      a          = data -> a;
         int      b          = data -> b;
         int      c          = data -> c;
@@ -113,13 +121,13 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
 
 /*
  *  Name      : decompress
- *  Purpose   : COnvert the DCT float image into a DCT int image
- *  Parameters: (Pnm_ppm) image = Image with Dct_ints as pixels
+ *  Purpose   : Unpack the Codeword value into Dct_int pixels
+ *  Parameters: (Pnm_ppm) image = Image with Codewords as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
- *              values being Dct_int structs (no way to check :( );
+ *              values being Dct_float structs (no way to check :( );
  *              Will CRE if can not allocate new memory to create the new
- *              trimmed image (if necessary)
+ *              Dct_int image (if necessary)
  */
 static void decompress(Pnm_ppm image)
 {
@@ -139,25 +147,32 @@ static void decompress(Pnm_ppm image)
 }
 
 /*
- *  Name      : dequantize
- *  Purpose   : Copy the old image data into the new image data 
- *              going from DCT int to DCT float
+ *  Name      : unpack
+ *  Purpose   : Unpacks the Codeword pixel into DCT ints
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
- *              (A2Methods_Object *) ptr     = The DCT value in the new array
- *              (void *)             cl      = The DCT int image
+ *              (A2Methods_Object *) ptr     = The DCT int value in the 
+ *                                             new array
+ *              (void *)             cl      = The Codeword image
  *  Output    : (None)
- *  Notes     : Converts the CIE float to RGB float
+ *  Notes     : Converts the Codeword int to DCT int
  */
 static void unpack(int col, int row, A2Methods_UArray2 uarray2, 
                        A2Methods_Object *ptr, void *cl)
 {
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = cl;
-        Codeword           data    = methods -> at(pixels, col, row);
 
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
+
+        Codeword data       = methods -> at(pixels, col, row);
         Dct_int  inNewImage = ptr;
+        
+        assert(data != NULL);
+        assert(inNewImage != NULL);
+
         uint64_t word       = data -> codeword;
 
         int aLength  = getALength();

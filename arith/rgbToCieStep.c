@@ -1,3 +1,10 @@
+/* 
+ *   Name       : rgbtoCieStep.c
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Module that converts RGB float values to the CIE color space
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <pnm.h>
 #include <a2plain.h>
 #include "CompressionStep.h"

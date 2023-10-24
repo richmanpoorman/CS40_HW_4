@@ -1,3 +1,10 @@
+/* 
+ *   Name       : arith.c
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Coordinates the sequencing of each compression step
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+ 
 #include <stdio.h>
 #include <pnm.h>
 #include <a2methods.h>

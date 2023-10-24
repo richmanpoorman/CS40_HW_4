@@ -7,6 +7,8 @@
 
 #define MAX_WIDTH 64
 
+Except_T Bitpack_Overflow = { "Overflow packing bits" };
+
 bool Bitpack_fitsu(uint64_t n, unsigned width);
 bool Bitpack_fitss( int64_t n, unsigned width);
 uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb);

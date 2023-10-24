@@ -1,3 +1,10 @@
+/* 
+ *   Name       : codewordIO.h
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Module for reading and writing codewords
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <stdio.h>
 #include <pnm.h>
 

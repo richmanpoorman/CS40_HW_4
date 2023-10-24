@@ -1,3 +1,10 @@
+/* 
+ *   Name       : codewordIO.c
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Module for reading and writing codewords
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <stdio.h>
 #include <pnm.h>
 #include "PixelStructs.h"
@@ -16,6 +23,12 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
 static void writeData(int col, int row, A2Methods_UArray2 uarray2, 
                       A2Methods_Object *ptr, void *cl);
 
+/*
+ *  Name      : readCodewordFile
+ *  Purpose   : Reads a file containing codewords for a compressed image
+ *  Parameters: (FILE)               input   = The file to read
+ *  Output    : (None)
+ */
 Pnm_ppm readCodewordFile(FILE *input)
 {
         unsigned height, width;
@@ -42,6 +55,7 @@ Pnm_ppm readCodewordFile(FILE *input)
 
         return image;
 }
+
 static void readData(int col, int row, A2Methods_UArray2 uarray2, 
                       A2Methods_Object *ptr, void *cl)
 {
@@ -93,16 +107,16 @@ void writeCodewordFile(Pnm_ppm codewordImage, FILE *output)
 }
 
 /*
- *  Name      : dequantize
+ *  Name      : writeData
  *  Purpose   : Copy the old image data into the new image data 
  *              going from DCT int to DCT float
  *  Parameters: (int)                col     = The current column to copy
  *              (int)                row     = The current row to copy
  *              (A2Methods_UArray2)  uarray2 = The new array to copy into
- *              (A2Methods_Object *) ptr     = The DCT value in the new array
- *              (void *)             cl      = The DCT int image
+ *              (A2Methods_Object *) ptr     = The codeword to write
+ *              (void *)             cl      = The output file
  *  Output    : (None)
- *  Notes     : Converts the CIE float to RGB float
+ *  Notes     : Prints a codeword to the given file in big endian order
  */
 static void writeData(int col, int row, A2Methods_UArray2 uarray2, 
                       A2Methods_Object *ptr, void *cl)

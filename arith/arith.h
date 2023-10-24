@@ -1,3 +1,9 @@
+/* 
+ *   Name       : arith.h
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Coordinates the sequencing of each compression step
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
 #include <stdio.h>
 #include <pnm.h>
 
@@ -14,6 +20,7 @@
  *  Notes     : Assumes that the file is open
  */
 void compress40Output(FILE *input, FILE *output);
+
 /*
  *  Name      : decompress40Output
  *  Purpose   : Take the compressed image and print the 
@@ -33,6 +40,7 @@ void decompress40Output(FILE *input, FILE *output);
  *  Notes     : Assumes that the Pnm_ppm is valid
  */
 void compress40Image(Pnm_ppm image);
+
 /*
  *  Name      : decompress40Image
  *  Purpose   : Takes an image and decompresses it in-place

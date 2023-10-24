@@ -92,9 +92,28 @@ void sanityCheck() {
         unsigned lsb2 = 9;       
         assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w, lsb) == val);
         assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w2, lsb2) == Bitpack_getu(word, w2, lsb2));
-        printf("this is ok\n");
+        //printf("this is ok\n");
 }
 
+void tryExceptTest() {
+        uint64_t word = 0x3f4;
+        unsigned w = 2;
+        unsigned lsb = 2;
+        uint64_t val = 8; 
+        TRY
+                Bitpack_newu(word, w, lsb, val);
+        EXCEPT(Bitpack_Overflow);
+                printf("GOOD JOB\n");
+        END_TRY;
+
+        uint64_t val2 = 8; 
+        TRY
+                Bitpack_news(word, w, lsb, val2);
+        EXCEPT(Bitpack_Overflow);
+                printf("GOOD JOB AGAIN\n");
+        END_TRY;
+
+}
 
 void test(FILE *input, FILE *output)
 {
@@ -103,6 +122,7 @@ void test(FILE *input, FILE *output)
         getTests();
         widthOfOne();
         sanityCheck();
+        tryExceptTest();
         (void) input;
         (void) output;
 }

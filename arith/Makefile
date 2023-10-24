@@ -55,7 +55,7 @@ COMPRESSION_FILES = arith.o uarray2.o a2plain.o trimStep.o \
 
 ############### Rules ###############
 
-all: ppmdiff 40image test
+all: ppmdiff 40image
 
 test: testSteps customTest
 

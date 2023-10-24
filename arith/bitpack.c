@@ -20,15 +20,45 @@ static uint64_t rightShift(uint64_t word, unsigned count);
 static uint64_t complement(uint64_t word);
 
 /* Implementation */
+
+/*
+ *  Name      : Bitpack_fitsu
+ *  Purpose   : Checks if the unsigned value can be packed into (width) bits
+ *  Parameters: (uint64_t) n     = The value to check if it fits
+ *              (unsigned) width = The number of bits that it can check against
+ *  Output    : (bool) True if the number can fit in width bits, false 
+ *                     if it can not
+ *  Notes     : Will CRE if given a width greater than 64
+ *              Will let 0 fit into 0 bits
+ */
 bool Bitpack_fitsu(uint64_t n, unsigned width) 
 {
         assert(width <= MAX_WIDTH);
+
+        /* All 64 bit numbers can fit in 64 bits */
         if (width == MAX_WIDTH) {
                 return true;
         }
+        /* 
+         *  Otherwise, find the upper bound of 2^(width) - 1, which 
+         *  means that we can check if it is strictly less than 2^(width)
+         */
+
         uint64_t maxValue = leftShift(1, width);
         return n < maxValue;
 }
+
+/*
+ *  Name      : Bitpack_fitss
+ *  Purpose   : Checks if the signed value can be packed into (width) bits
+ *  Parameters: (int64_t)  n     = The value to check if it fits
+ *              (unsigned) width = The number of bits that it can check against
+ *  Output    : (bool) True if the number can fit in width bits, false 
+ *                     if it can not
+ *  Notes     : Will CRE if given a width greater than 64
+ *              Will not let anything fit in 0 bits, but will fit
+ *                      [-1, 0] in 1 bit
+ */
 bool Bitpack_fitss( int64_t n, unsigned width) 
 {
         assert(width <= MAX_WIDTH);
@@ -37,7 +67,7 @@ bool Bitpack_fitss( int64_t n, unsigned width)
                 return true;
         }
 
-        /* Can only fit 0 in 0-bits */
+        /* Can't fit anything in 0-bits */
         if (width < 1) {
                 return false;
         }
@@ -46,8 +76,23 @@ bool Bitpack_fitss( int64_t n, unsigned width)
                 n = (int64_t)complement((uint64_t)n);
         }
         /* Saves 1 bit for the sign, then checks if the value can fit */
-        return Bitpack_fitsu(n, width - 1);
+        return Bitpack_fitsu((uint64_t)n, width - 1);
 }
+
+/*
+ *  Name      : Bitpack_getu
+ *  Purpose   : Get the packed value of size (width) at (lsb) in (word)
+ *              for unsigned values
+ *  Parameters: (uint64_t) word  = The word with the packed data
+ *              (unsigned) width = The number of bits of the value in (word)
+ *              (unsigned) lsb   = The least significant bit of the value 
+ *                                 to search for in (word)
+ *  Output    : (uint64_t) The value stored in the word
+ *  Notes     : Will CRE if given a width greater than 64
+ *              Will CRE if lsb is greater than 64
+ *              Will CRE if width + lsb is greater than 64
+ *              Will return 0 if given a width of 0
+ */
 uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
 {
         
@@ -84,6 +129,20 @@ uint64_t Bitpack_getu(uint64_t word, unsigned width, unsigned lsb)
 
 }
 
+/*
+ *  Name      : Bitpack_gets
+ *  Purpose   : Get the packed value of size (width) at (lsb) in (word) 
+ *              for signed values
+ *  Parameters: (uint64_t) word  = The word with the packed data
+ *              (unsigned) width = The number of bits of the value in (word)
+ *              (unsigned) lsb   = The least significant bit of the value 
+ *                                 to search for in (word)
+ *  Output    : (int64_t) The value stored in the word
+ *  Notes     : Will CRE if given a width greater than 64
+ *              Will CRE if lsb is greater than 64
+ *              Will CRE if width + lsb is greater than 64
+ *              Will return 0 if given a width of 0
+ */
 int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
 {
         assert(width <= MAX_WIDTH);
@@ -116,12 +175,36 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
         }
         return value;
 }
+
+/*
+ *  Name      : Bitpack_newu
+ *  Purpose   : Pack (value) using (width) bits at (lsb) into (word) for 
+ *              unsigned values
+ *  Parameters: (uint64_t) word  = The word to pack into
+ *              (unsigned) width = The number of bits that (value) will use
+ *              (unsigned) lsb   = The position of the least significant bit 
+ *                                 of (value) in (word)
+ *              (uint64_t) value = The value to be packed into the word
+ *  Output    : (uint64_t) The word after packing value in
+ *  Notes     : Will CRE if given a width greater than 64
+ *              Will CRE if lsb is greater than 64
+ *              Will CRE if width + lsb is greater than 64
+ *              Will fully replace the word at width equal to 64
+ *              Will return the word for width equal to 0
+ */
 uint64_t Bitpack_newu(uint64_t word, unsigned width, 
                       unsigned lsb, uint64_t value)
 {
         assert(width <= MAX_WIDTH);
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
+
+        if (width == MAX_WIDTH) {
+                return value;
+        }
+        if (width == 0) {
+                return word;
+        }
 
         uint64_t mask = complement(0);
         
@@ -169,6 +252,24 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
 
         return word;
 }
+
+
+/*
+ *  Name      : Bitpack_news
+ *  Purpose   : Pack (value) using (width) bits at (lsb) into (word) for 
+ *              signed values
+ *  Parameters: (uint64_t) word  = The word to pack into
+ *              (unsigned) width = The number of bits that (value) will use
+ *              (unsigned) lsb   = The position of the least significant bit 
+ *                                 of (value) in (word)
+ *              (int64_t)  value = The value to be packed into the word
+ *  Output    : (uint64_t) The word after packing value in
+ *  Notes     : Will CRE if given a width greater than 64
+ *              Will CRE if lsb is greater than 64
+ *              Will CRE if width + lsb is greater than 64
+ *              Will fully replace the word at width equal to 64
+ *              Will return the word for width equal to 0
+ */
 uint64_t Bitpack_news(uint64_t word, unsigned width, 
                       unsigned lsb,  int64_t value)
 {       
@@ -181,7 +282,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
          * Note that it is 1 because then we only have space for the sign
          * bit at 1 width
          */
-        if (width <= 1) {
+        if (width == 0) {
                 return word;
         }
         /* 
@@ -201,6 +302,16 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
         return Bitpack_newu(word, width, lsb, unsignedValue);
 }
 
+
+/*
+ *  Name      : leftShift
+ *  Purpose   : Shift (word) to the left by (count) bits
+ *  Parameters: (uint64_t) word  = The value to shift
+ *              (unsigned) count = The number of bits to shift by
+ *  Output    : (uint64_t) The word after shifting
+ *  Notes     : Will return the word itself (do nothing) with count equal to 0
+ *              Will return 0 with counter greater or equal to 64
+ */
 static uint64_t leftShift(uint64_t word, unsigned count)
 {
         if (count == 0) {
@@ -212,6 +323,15 @@ static uint64_t leftShift(uint64_t word, unsigned count)
         return word << count;
         
 }
+/*
+ *  Name      : rightShift
+ *  Purpose   : Shift (word) to the left by (count) bits
+ *  Parameters: (uint64_t) word  = The value to shift
+ *              (unsigned) count = The number of bits to shift by
+ *  Output    : (uint64_t) The word after shifting
+ *  Notes     : Will return the word itself (do nothing) with count equal to 0
+ *              Will return 0 with counter greater or equal to 64
+ */
 static uint64_t rightShift(uint64_t word, unsigned count)
 {
         if (count == 0) {
@@ -222,6 +342,14 @@ static uint64_t rightShift(uint64_t word, unsigned count)
         }
         return word >> count;
 }
+
+/*
+ *  Name      : complement
+ *  Purpose   : Return the bitwise complement of (word)
+ *  Parameters: (uint64_t) word  = The value to find the bitwise complement of
+ *  Output    : (uint64_t) The complement
+ *  Notes     : (None)
+ */
 static uint64_t complement(uint64_t word)
 {
         return ~word;

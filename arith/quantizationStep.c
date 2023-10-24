@@ -1,3 +1,10 @@
+/* 
+ *   Name       : quantizationStep.c
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Module that handles the quantization of luma and chroma
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <pnm.h>
 #include <a2plain.h>
 #include "CompressionStep.h"
@@ -96,6 +103,8 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
  *  Name      : bcdToBits
  *  Purpose   : Maps luma b, c, and d float values to luma int values
  *  Parameters: (float) y       =       The value to convert
+ *              (int) maxInt    =       The maximum int value that can be used
+ *                                      to represent the converted value
  *  Output    : An int representing the scaled luma value
  */
 static int bcdToBits(float x, int maxInt)
@@ -109,7 +118,7 @@ static int bcdToBits(float x, int maxInt)
 /*
  *  Name      : aToBits
  *  Purpose   : Maps luma a float value to luma a int values
- *  Parameters: (float) y       =       The value to convert
+ *  Parameters: (float) a      =       The value to convert
  *  Output    : An int representing the scaled luma value
  */
 static int aToBits(float a) 
@@ -123,7 +132,7 @@ static int aToBits(float a)
 
 /*
  *  Name      : decompress
- *  Purpose   : COnvert the DCT float image into a DCT int image
+ *  Purpose   : Convert the DCT int image into a DCT float image
  *  Parameters: (Pnm_ppm) image = Image with Dct_ints as pixels
  *  Output    : (None)
  *  Notes     : Assumes that the Pnm_ppm is in proper format, with the
@@ -191,7 +200,9 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
 /*
  *  Name      : bcdToFloat
  *  Purpose   : Maps luma b, c,  and d int values to luma float values
- *  Parameters: (unsigned) x       =   The value to convert
+ *  Parameters: (int) x       =   The value to convert
+ *              (int) maxInt  =   The maximum integer value that can be used
+ *                                to represent the converted value
  *  Output    : An float representing the scaled luma value
  */
 static float bcdToFloat(int x, int maxInt)
@@ -203,7 +214,7 @@ static float bcdToFloat(int x, int maxInt)
 /*
  *  Name      : aToFloat
  *  Purpose   : Maps luma a float value to luma a int value
- *  Parameters: (float) y       =       The value to convert
+ *  Parameters: (float) a       =       The value to convert
  *  Output    : An float representing the scaled luma value
  */
 static float aToFloat(int a) 

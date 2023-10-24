@@ -1,3 +1,11 @@
+/* 
+ *   Name       : codewordInfo.h
+ *   Assignment : CS40 Homework 4 (arith)
+ *   Purpose    : Representation of the codeword table, with getters for the 
+ *                sizes needed for quantization and codeword packing
+ *   Editors    : Matthew Wong (mwong14), Ivi Fung (sfung02)
+ */
+
 #include <stdint.h>
 
 /* The Codeword table in the form {a, b, c, d, pb, pr} for width and lsb */
@@ -127,6 +135,12 @@ int getPbLsb() {
         return codewordLSBs[4];
 }
 
+/*
+ *  Name      : getPrLsb
+ *  Purpose   : Getter for the least significant bit of pr in the codeword
+ *  Parameters: None
+ *  Output    : The bit place of the lsb of pr
+ */
 int getPrLsb() {
         int codewordLSBs [6] = lsb;
         return codewordLSBs[5];
@@ -205,7 +219,7 @@ uint64_t getDMaxValue() {
  *  Name      : getNumBytes
  *  Purpose   : Getter for the total byte size of the word
  *  Parameters: None
- *  Output    : The largest possible int used to represent luma d
+ *  Output    : The total byte size of the word
  */
 int getNumBytes()
 {

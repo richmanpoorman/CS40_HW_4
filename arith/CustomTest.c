@@ -45,42 +45,49 @@ void onesCanGoIn() {
 }
 
 void fitsuTests() {
-                bool fitsu_lowEdge_succeed = Bitpack_fitsu(0,3);
-                assert (fitsu_lowEdge_succeed == true);
+        bool fitsu_lowEdge_succeed = Bitpack_fitsu(0,3);
+        assert (fitsu_lowEdge_succeed == true);
                 
-                bool fitsu_middle_succeed = Bitpack_fitsu(5,3);
-                assert (fitsu_middle_succeed == true);
+        bool fitsu_middle_succeed = Bitpack_fitsu(5,3);
+        assert (fitsu_middle_succeed == true);
                
-                bool fitsu_highEdge_succeed = Bitpack_fitsu(7,3);
-                assert (fitsu_highEdge_succeed == true);
+        bool fitsu_highEdge_succeed = Bitpack_fitsu(7,3);
+        assert (fitsu_highEdge_succeed == true);
                
-                bool fitsu_lowEdge_fail = Bitpack_fitsu(-1,3);
-                assert (fitsu_lowEdge_fail == false);
+        bool fitsu_lowEdge_fail = Bitpack_fitsu(-1,3);
+        assert (fitsu_lowEdge_fail == false);
 
-                bool fitsu_highEdge_fail = Bitpack_fitsu(8,3);
-                assert (fitsu_highEdge_fail == false);
+        bool fitsu_highEdge_fail = Bitpack_fitsu(8,3);
+        assert (fitsu_highEdge_fail == false);
 }
 
 void getTests() {
-                unsigned getu_test = Bitpack_getu(0x3f4, 6, 2);
-                //fprintf(stderr, "getu_test result: %u\n", getu_test);
+        unsigned getu_test = Bitpack_getu(0x3f4, 6, 2);
+        //fprintf(stderr, "getu_test result: %u\n", getu_test);
 
-                signed gets_test = Bitpack_gets(0x3f4, 6, 2);
-                //fprintf(stderr, "gets_test result: %i\n", gets_test);
+        signed gets_test = Bitpack_gets(0x3f4, 6, 2);
+        //fprintf(stderr, "gets_test result: %i\n", gets_test);
 
-                assert(getu_test == 61);
-                assert(gets_test == -3);
+        assert(getu_test == 61);
+        assert(gets_test == -3);
 }
 
 void widthOfOne() {
-                signed gets_negativeOne = Bitpack_gets(0xfff, 1, 1);
-                fprintf(stderr, "here is a -1: %i\n", gets_negativeOne);
-                assert(gets_negativeOne == -1);
+        signed gets_negativeOne = Bitpack_gets(0xfff, 1, 1);
+        fprintf(stderr, "here is a -1: %i\n", gets_negativeOne);
+        assert(gets_negativeOne == -1);
 
-                signed gets_zero = Bitpack_gets(0x000, 1, 1);
-                fprintf(stderr, "here is a 0: %i\n", gets_zero);
-                assert(gets_zero == 0);
+        signed gets_zero = Bitpack_gets(0x000, 1, 1);
+        fprintf(stderr, "here is a 0: %i\n", gets_zero);
+        assert(gets_zero == 0);
 
+}
+
+void sanityCheck() {
+        uint64_t word = 0xfff;
+        
+        assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w, lsb) == val);
+        Bitpack_getu(Bitpack_newu(word, w, lsb, val), w2, lsb2) == Bitpack_getu(word, w2, lsb2);
 }
 
 void test(FILE *input, FILE *output)

@@ -11,6 +11,7 @@
 #include <a2methods.h>  
 #include "PixelStructs.h"
 #include <stdio.h>
+#include <assert.h>
 
 #define rToY  0.299
 #define gToY  0.587

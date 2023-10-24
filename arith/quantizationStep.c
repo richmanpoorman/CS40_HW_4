@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <arith40.h>
 #include "codewordInfo.h"
-
+#include <assert.h>
 
 #define maxFloat 0.3
 
@@ -192,7 +192,7 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
         Dct_int   data       = methods -> at(pixels, col, row);
         Dct_float inNewImage = ptr;
 
-        assert(data != NULL)
+        assert(data != NULL);
 
         
         int     a          = data -> a;

@@ -11,6 +11,7 @@
 #include <a2methods.h>  
 #include "PixelStructs.h"
 #include <stdio.h>
+#include <assert.h>
 
 #define intDenominator 255
 

@@ -10,7 +10,8 @@
 #include "bitpack.h"
 
 
-void onesCanGoIn() {
+void onesCanGoIn() 
+{
         int wordLength = 64;
 
         for (int wordSize = 1; wordSize <= wordLength; wordSize++) {
@@ -39,12 +40,14 @@ void onesCanGoIn() {
                 word = 0;
                 word = Bitpack_newu(word, wordSize, remainingSize / 2, value);
                 result = Bitpack_getu(word, wordSize, remainingSize / 2);
-                //fprintf(stderr, "Value: %lu, Result: %lu\n", value, result);
+                /* fprintf(stderr, "Value: %lu, Result: %lu\n", value, result); 
+                */
                 assert(result == value);            
         }
 }
 
-void fitsuTests() {
+void fitsuTests() 
+{
         bool fitsu_lowEdge_succeed = Bitpack_fitsu(0,3);
         assert (fitsu_lowEdge_succeed == true);
                 
@@ -61,13 +64,13 @@ void fitsuTests() {
         assert (fitsu_highEdge_fail == false);
 }
 
-void getTests() {
+void getTests() 
+{
         unsigned getu_test = Bitpack_getu(0x3f4, 6, 2);
-        //fprintf(stderr, "getu_test result: %u\n", getu_test);
+        /* fprintf(stderr, "getu_test result: %u\n", getu_test); */
 
         signed gets_test = Bitpack_gets(0x3f4, 6, 2);
-        //fprintf(stderr, "gets_test result: %i\n", gets_test);
-
+        /* fprintf(stderr, "gets_test result: %i\n", gets_test); */
         assert(getu_test == 61);
         assert(gets_test == -3);
 }
@@ -83,7 +86,8 @@ void widthOfOne() {
 
 }
 
-void sanityCheck() {
+void sanityCheck() 
+{
         uint64_t word = 0x3f4;
         unsigned w = 6;
         unsigned w2 = 8;
@@ -91,11 +95,13 @@ void sanityCheck() {
         uint64_t val = 3;
         unsigned lsb2 = 9;       
         assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w, lsb) == val);
-        assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w2, lsb2) == Bitpack_getu(word, w2, lsb2));
-        //printf("this is ok\n");
+        assert(Bitpack_getu(Bitpack_newu(word, w, lsb, val), w2, lsb2) == 
+                Bitpack_getu(word, w2, lsb2));
+        /* printf("this is ok\n"); */
 }
 
-void tryExceptTest() {
+void tryExceptTest() 
+{
         uint64_t word = 0x3f4;
         unsigned w = 2;
         unsigned lsb = 2;
@@ -115,6 +121,35 @@ void tryExceptTest() {
 
 }
 
+void maxSignedTest()
+{
+        int64_t allOnes = -1;
+        uint64_t word = 0;
+        uint64_t fitSmall = Bitpack_news(word, 4, 10, allOnes);
+        assert(-1 == Bitpack_gets(fitSmall, 4, 10));
+
+        uint64_t fitBig = Bitpack_news(word, 64, 0, allOnes);
+        assert(-1 == Bitpack_gets(fitBig, 64, 0));
+
+        uint64_t fitZero = Bitpack_news((uint64_t)allOnes, 0, 4, 0);
+        assert(0 == Bitpack_gets(fitZero, 0, 4));
+
+        uint64_t random64Bit = Bitpack_news(word, 64, 0, 0xfaf9fc12);
+        assert(0xfaf9fc12 == Bitpack_gets(random64Bit, 64, 0));
+
+        uint64_t oneBit = Bitpack_news(word, 1, 31, -1);
+        assert(-1 == Bitpack_gets(oneBit, 1, 31));
+
+        uint64_t emptyBits = Bitpack_news((uint64_t)allOnes, 14, 46, -12);
+        assert(-12 == Bitpack_gets(emptyBits, 14, 46));
+
+        uint64_t putSigned   = Bitpack_news(word, 5, 0, -10);
+        uint64_t putUnsigned = Bitpack_news(putSigned, 5, 5, 6);
+        assert(-10 == Bitpack_gets(putUnsigned, 5, 0));
+        assert(6 == Bitpack_gets(putUnsigned, 5, 5));
+        fprintf(stderr, "Max Signed Test Done\n");
+}
+
 void test(FILE *input, FILE *output)
 {
         onesCanGoIn();
@@ -123,6 +158,7 @@ void test(FILE *input, FILE *output)
         widthOfOne();
         sanityCheck();
         tryExceptTest();
+        maxSignedTest();
         (void) input;
         (void) output;
 }

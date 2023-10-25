@@ -55,7 +55,7 @@ COMPRESSION_FILES = arith.o uarray2.o a2plain.o trimStep.o \
 
 ############### Rules ###############
 
-all: ppmdiff 40image
+all: ppmdiff 40image-6
 
 test: testSteps customTest
 
@@ -73,7 +73,7 @@ customTest: CustomTest.o $(COMPRESSION_FILES)
 testSteps: DefaultTest.o $(COMPRESSION_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
-40image: 40image.o compress40.o $(COMPRESSION_FILES)
+40image-6: 40image.o compress40.o $(COMPRESSION_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 ppmdiff: a2plain.o uarray2.o ppmdiff.o 

@@ -40,7 +40,7 @@ void onesCanGoIn()
                 word = 0;
                 word = Bitpack_newu(word, wordSize, remainingSize / 2, value);
                 result = Bitpack_getu(word, wordSize, remainingSize / 2);
-                /* fprintf(stderr, "Value: %lu, Result: %lu\n", value, result); 
+                /* fprintf(stderr, "Value: %lu, Result: %lu\n", value, result);
                 */
                 assert(result == value);            
         }

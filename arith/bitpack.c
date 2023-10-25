@@ -76,11 +76,11 @@ bool Bitpack_fitss( int64_t n, unsigned width)
                 return true;
         }
 
-        /* Can't fit anything in 0-bits */
+        /* Can only fit 0 in 0 bits */
         if (width == 0) {
                 return n == 0;
         }
-        /* The compliment takes the same amount of space for bits */
+        /* The complement takes the same amount of space for bits */
         if (n < 0) { 
                 n = (int64_t)complement((uint64_t)n);
         }

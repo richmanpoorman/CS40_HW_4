@@ -134,11 +134,24 @@ void maxSignedTest()
         uint64_t fitZero = Bitpack_news((uint64_t)allOnes, 0, 4, 0);
         assert(0 == Bitpack_gets(fitZero, 0, 4));
 
-        uint64_t random64Bit = Bitpack_news(word, 64, 0, 0xfaf9fc12);
-        assert(0xfaf9fc12 == Bitpack_gets(random64Bit, 64, 0));
+        int64_t bitValue = 0x7af9fc12faf9fc12;
+        uint64_t random64Bit = Bitpack_news(word, 64, 0, bitValue);
+        assert(bitValue == Bitpack_gets(random64Bit, 64, 0));
 
         uint64_t oneBit = Bitpack_news(word, 1, 31, -1);
+        uint64_t oneBit2 = Bitpack_news(word, 1, 63, 0);
         assert(-1 == Bitpack_gets(oneBit, 1, 31));
+        assert(0 == Bitpack_gets(oneBit2, 1, 63));
+
+        uint64_t maxValue = Bitpack_news(word, 5, 14, 15);
+        uint64_t minValue = Bitpack_news(maxValue, 5, 18, -16);
+        assert(15 == Bitpack_gets(minValue, 5, 14));
+        assert(-16 == Bitpack_gets(minValue, 5, 18));
+
+        int64_t bigNumber = (int64_t)0xC000000000000000;
+        uint64_t almostFull = Bitpack_news(word, 63, 1, bigNumber);
+        assert(bigNumber == Bitpack_gets(almostFull, 63, 1));
+        
 
         uint64_t emptyBits = Bitpack_news((uint64_t)allOnes, 14, 46, -12);
         assert(-12 == Bitpack_gets(emptyBits, 14, 46));

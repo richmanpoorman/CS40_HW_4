@@ -83,7 +83,6 @@ static void copyIntoNew(int col, int row, A2Methods_UArray2 uarray2,
         assert(inNewImage != NULL);
 
         *inNewImage = *data;
-        (void) uarray2;
 }
 
 /*

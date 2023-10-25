@@ -65,6 +65,7 @@ static void compress(Pnm_ppm image)
         assert(pixels != NULL);
         int               size        = sizeof(struct Cie_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        assert(newImage != NULL);
         
         methods -> map_row_major(newImage, toCie, pixels);
         methods -> free(&pixels);
@@ -98,10 +99,11 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
         Cie_float inNewImage = ptr;
 
         assert(data != NULL);
+        assert(inNewImage != NULL);
 
-        float     r          = data -> red;
-        float     g          = data -> green;
-        float     b          = data -> blue;
+        float r = data -> red;
+        float g = data -> green;
+        float b = data -> blue;
 
         float y  = rToY  * r + gToY  * g + bToY  * b;
         float pb = rToPb * r + gToPb * g + bToPb * b;
@@ -112,7 +114,6 @@ static void toCie(int col, int row, A2Methods_UArray2 uarray2,
                 clampToRange(pr, -0.5, 0.5)
         };
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 
@@ -140,6 +141,7 @@ static void decompress(Pnm_ppm image)
         assert(pixels != NULL);
         int               size        = sizeof(struct Rgb_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        assert(newImage != NULL);
 
         methods -> map_row_major(newImage, toRgb, pixels);
         methods -> free(&pixels);
@@ -172,10 +174,11 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
         Rgb_float inNewImage = ptr;
 
         assert(data != NULL);
+        assert(inNewImage != NULL);
 
-        float     y          = data -> y;
-        float     pb         = data -> pb;
-        float     pr         = data -> pr;
+        float y  = data -> y;
+        float pb = data -> pb;
+        float pr = data -> pr;
 
         float r = yToR * y + pbToR * pb + prToR * pr;
         float g = yToG * y + pbToG * pb + prToG * pr;
@@ -186,7 +189,6 @@ static void toRgb(int col, int row, A2Methods_UArray2 uarray2,
                 clampToRange(b, 0.0, 1.0)
         };
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 

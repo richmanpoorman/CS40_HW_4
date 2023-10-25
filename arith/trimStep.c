@@ -8,7 +8,7 @@
 #include <pnm.h>
 #include <a2plain.h>
 #include "CompressionStep.h"
-
+#include <assert.h>
 #include <stdio.h>
 
 static void compress(Pnm_ppm image);
@@ -29,6 +29,7 @@ static void copyIntoNew(int col, int row, A2Methods_UArray2 uarray2,
  */
 static void compress(Pnm_ppm image)
 {
+        assert(image != NULL);
         int width  = image -> width;
         int height = image -> height;
         if (width % 2 == 0 && height % 2 == 0) {
@@ -41,9 +42,11 @@ static void compress(Pnm_ppm image)
         width  = width  - (width  % 2);
         height = height - (height % 2);
         A2Methods_UArray2 pixels   = image -> pixels;
+        assert(pixels != NULL);
         int               size     = methods -> size(pixels);
         A2Methods_UArray2 newImage = methods -> new(width, height, size);
-        
+        assert(newImage != NULL);
+
         methods -> map_row_major(newImage, copyIntoNew, pixels);
         methods -> free(&pixels);
         
@@ -70,8 +73,14 @@ static void copyIntoNew(int col, int row, A2Methods_UArray2 uarray2,
         A2Methods_T       methods       = uarray2_methods_plain;
         A2Methods_UArray2 previousImage = cl;
 
-        Pnm_rgb inNewImage = ptr;
+        assert(uarray2 != NULL);
+        assert(previousImage != NULL);
+        
         Pnm_rgb data       = methods -> at(previousImage, col, row);
+        Pnm_rgb inNewImage = ptr;
+
+        assert(data != NULL);
+        assert(inNewImage != NULL);
 
         *inNewImage = *data;
         (void) uarray2;

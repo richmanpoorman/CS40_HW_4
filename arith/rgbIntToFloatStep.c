@@ -43,11 +43,11 @@ static void compress(Pnm_ppm image)
 
         A2Methods_T methods = uarray2_methods_plain;
 
-        A2Methods_UArray2 pixels      = image -> pixels;
+        A2Methods_UArray2 pixels   = image -> pixels;
         assert(pixels != NULL);
-        int               size        = sizeof(struct Rgb_float);
-        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
-        
+        int               size     = sizeof(struct Rgb_float);
+        A2Methods_UArray2 newImage = methods -> new(width, height, size);
+        assert(newImage != NULL);
 
         methods -> map_row_major(newImage, toFloat, image);
         methods -> free(&pixels);
@@ -74,9 +74,10 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
                     A2Methods_Object *ptr, void *cl)
 {
 
-        A2Methods_T       methods     = uarray2_methods_plain;
-        Pnm_ppm           image       = cl;
+        A2Methods_T methods = uarray2_methods_plain;
+        Pnm_ppm     image   = cl;
 
+        assert(uarray2 != NULL);
         assert(image != NULL);
 
         A2Methods_UArray2 pixels      = image -> pixels;
@@ -84,10 +85,10 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
 
         assert(pixels != NULL);
 
-        Pnm_rgb           data        = methods -> at(pixels, col, row);
-        Rgb_float         inNewImage  = ptr;
-
+        Pnm_rgb   data        = methods -> at(pixels, col, row);
+        Rgb_float inNewImage  = ptr;
         assert(data != NULL);
+        assert(inNewImage != NULL);
 
         struct Rgb_float newPixel = {
                 intToFloat(data -> red  , denominator, 0, 1),
@@ -95,7 +96,6 @@ static void toFloat(int col, int row, A2Methods_UArray2 uarray2,
                 intToFloat(data -> blue , denominator, 0, 1)
         };
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 
@@ -119,10 +119,11 @@ static void decompress(Pnm_ppm image)
 
         A2Methods_T methods = uarray2_methods_plain;
 
-        A2Methods_UArray2 pixels      = image -> pixels;
+        A2Methods_UArray2 pixels   = image -> pixels;
         assert(pixels != NULL);
-        int               size        = sizeof(struct Pnm_rgb);
-        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        int               size     = sizeof(struct Pnm_rgb);
+        A2Methods_UArray2 newImage = methods -> new(width, height, size);
+        assert(newImage != NULL);
 
         methods -> map_row_major(newImage, toInt, pixels);
         methods -> free(&pixels);
@@ -148,16 +149,17 @@ static void toInt(int col, int row, A2Methods_UArray2 uarray2,
                   A2Methods_Object *ptr, void *cl)
 {
         
-        A2Methods_T       methods     = uarray2_methods_plain;
-        A2Methods_UArray2 pixels      = cl;
+        A2Methods_T       methods = uarray2_methods_plain;
+        A2Methods_UArray2 pixels  = cl;
 
         assert(uarray2 != NULL);
         assert(pixels != NULL);
 
-        Rgb_float         data        = methods -> at(pixels, col, row);
-        Pnm_rgb           inNewImage  = ptr;
+        Rgb_float data       = methods -> at(pixels, col, row);
+        Pnm_rgb   inNewImage = ptr;
 
         assert(data != NULL);
+        assert(inNewImage != NULL);
 
         struct Pnm_rgb newPixel = {
                 floatToInt(data -> red  , intDenominator, 0, intDenominator),
@@ -165,7 +167,6 @@ static void toInt(int col, int row, A2Methods_UArray2 uarray2,
                 floatToInt(data -> blue , intDenominator, 0, intDenominator)
         };
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 static struct CompressionStep rgbIntToFloatStruct = {

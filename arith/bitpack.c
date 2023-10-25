@@ -200,6 +200,8 @@ int64_t Bitpack_gets(uint64_t word, unsigned width, unsigned lsb)
  *              Will CRE if width + lsb is greater than 64
  *              Will fully replace the word at width equal to 64
  *              Will return the word for width equal to 0
+ *              Will raise Bitpack_overflow if passed a value that does not
+ *              fit in the width
  */
 uint64_t Bitpack_newu(uint64_t word, unsigned width, 
                       unsigned lsb, uint64_t value)
@@ -236,7 +238,7 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
         
 
         /* 
-         * Want to clear out the 1s, so we can use the compliment 
+         * Want to clear out the 1s, so we can use the complement 
          * to make all 1s except where we are putting it in
          */
         clearMask = complement(clearMask);
@@ -282,6 +284,8 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
  *              Will CRE if width + lsb is greater than 64
  *              Will fully replace the word at width equal to 64
  *              Will return the word for width equal to 0
+ *              Will raise Bitpack_Overflow if passed value that does not 
+ *              fit in the width
  */
 uint64_t Bitpack_news(uint64_t word, unsigned width, 
                       unsigned lsb,  int64_t value)
@@ -290,7 +294,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
         
-        if (!Bitpack_fitss(value, width) == false) {
+        if (!Bitpack_fitss(value, width)) {
                 RAISE(Bitpack_Overflow);
         }
 
@@ -311,7 +315,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
                 return (uint64_t)value;
         }
 
-        /* Get rid of the excess 1s from 2's compliment */
+        /* Get rid of the excess 1s from 2's complement */
         uint64_t unsignedValue = (uint64_t)value;
         unsignedValue = leftShift(unsignedValue, MAX_WIDTH - width);
         unsignedValue = rightShift(unsignedValue, MAX_WIDTH - width);

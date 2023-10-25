@@ -26,7 +26,7 @@ static void writeData(int col, int row, A2Methods_UArray2 uarray2,
 /*
  *  Name      : readCodewordFile
  *  Purpose   : Reads a file containing codewords for a compressed image
- *  Parameters: (FILE)               input   = The file to read
+ *  Parameters: (FILE*) input = The file to read
  *  Output    : (None)
  */
 Pnm_ppm readCodewordFile(FILE *input)

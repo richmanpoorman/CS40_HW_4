@@ -44,11 +44,12 @@ static void compress(Pnm_ppm image)
 
         A2Methods_T methods = uarray2_methods_plain;
 
-        A2Methods_UArray2 pixels      = image -> pixels;
+        A2Methods_UArray2 pixels   = image -> pixels;
         assert(pixels != NULL);
-        int               size        = sizeof(struct Dct_int);
-        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
-        
+        int               size     = sizeof(struct Dct_int);
+        A2Methods_UArray2 newImage = methods -> new(width, height, size);
+        assert(newImage != NULL);
+
         methods -> map_row_major(newImage, pack, pixels);
         methods -> free(&pixels);
         
@@ -81,6 +82,7 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
         Codeword inNewImage = ptr;
 
         assert(data != NULL);
+        assert(inNewImage != NULL);
 
         int      a          = data -> a;
         int      b          = data -> b;
@@ -104,22 +106,16 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
         int prLsb = getPrLsb();
 
         uint64_t word = 0;
-        assert(Bitpack_fitsu(a, aLength));
         word = Bitpack_newu(word, aLength, aLsb, a);
         
-        assert(Bitpack_fitss(b, bLength));
         word = Bitpack_news(word, bLength, bLsb, b);
 
-        assert(Bitpack_fitss(c, cLength));
         word = Bitpack_news(word, cLength, cLsb, c);
 
-        assert(Bitpack_fitss(d, dLength));
         word = Bitpack_news(word, dLength, dLsb, d);
 
-        assert(Bitpack_fitsu(pb, pbLength));
         word = Bitpack_newu(word, pbLength, pbLsb, pb);
 
-        assert(Bitpack_fitsu(pr, prLength));
         word = Bitpack_newu(word, prLength, prLsb, pr);
 
         struct Codeword newPixel = {
@@ -148,10 +144,11 @@ static void decompress(Pnm_ppm image)
 
         A2Methods_T methods = uarray2_methods_plain;
 
-        A2Methods_UArray2 pixels      = image -> pixels;
+        A2Methods_UArray2 pixels   = image -> pixels;
         assert(pixels != NULL);
-        int               size        = sizeof(struct Dct_float);
-        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        int               size     = sizeof(struct Dct_float);
+        A2Methods_UArray2 newImage = methods -> new(width, height, size);
+        assert(newImage != NULL);
 
         methods -> map_row_major(newImage, unpack, pixels);
         methods -> free(&pixels);
@@ -184,6 +181,7 @@ static void unpack(int col, int row, A2Methods_UArray2 uarray2,
         Dct_int  inNewImage = ptr;
         
         assert(data != NULL);
+        assert(inNewImage != NULL);
 
         uint64_t word = data -> codeword;
 

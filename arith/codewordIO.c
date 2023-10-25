@@ -26,11 +26,12 @@ static void writeData(int col, int row, A2Methods_UArray2 uarray2,
 /*
  *  Name      : readCodewordFile
  *  Purpose   : Reads a file containing codewords for a compressed image
- *  Parameters: (FILE*) input = The file to read
- *  Output    : (None)
+ *  Parameters: (FILE *)  input = The file to read
+ *  Output    : (Pnm_ppm) Returns the image in the Codeword format
  */
 Pnm_ppm readCodewordFile(FILE *input)
 {
+        assert(input != NULL);
         unsigned height, width;
         int read = fscanf(input, "COMP40 Compressed image format 2\n%u %u", 
                           &width, &height);
@@ -43,7 +44,9 @@ Pnm_ppm readCodewordFile(FILE *input)
         int size = sizeof(struct Codeword);
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = methods -> new(width, height, size);
-        
+
+        assert(pixels != NULL);
+
         methods -> map_row_major(pixels, readData, input);
 
         Pnm_ppm image = ALLOC(sizeof(*image));
@@ -81,6 +84,7 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
         int      numBytes = getNumBytes();
         int      byteSize = sizeof(char);
 
+        /* Reversed to do big-endian order */
         for (int byte = numBytes - 1; byte >= 0; byte--) {
                 assert(feof(input) == 0);
                 assert(ferror(input) == 0);
@@ -91,9 +95,10 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
                 word = Bitpack_newu(word, byteSize * 8, byte * byteSize * 8, 
                                     currByte);
         }
+        
         assert(ferror(input) == 0);
         struct Codeword newPixel = {
-                (uint32_t)word
+                word
         };
 
 
@@ -107,12 +112,15 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
 /*
  *  Name      : writeCodewordFile
  *  Purpose   : Writes a file containing codewords for a compressed image
- *  Parameters: (FILE)               outut   = The file to write to
+ *  Parameters: (Pnm_ppm) codewordImage = The compressed image to write out
+ *              (FILE *)  output        = The file to write to
  *  Output    : (None)
  *  Notes     : Writes a file containing codewords in big endian format
  */
 void writeCodewordFile(Pnm_ppm codewordImage, FILE *output)
 {
+        assert(codewordImage != NULL);
+        assert(output != NULL);
         unsigned int width  = codewordImage -> width * 2;
         unsigned int height = codewordImage -> height * 2; 
         fprintf(output, "COMP40 Compressed image format 2\n%u %u\n", 
@@ -120,6 +128,8 @@ void writeCodewordFile(Pnm_ppm codewordImage, FILE *output)
 
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = codewordImage -> pixels;
+
+        assert(pixels != NULL);
 
         methods -> map_row_major(pixels, writeData, output);
 }
@@ -140,8 +150,8 @@ static void writeData(int col, int row, A2Methods_UArray2 uarray2,
                       A2Methods_Object *ptr, void *cl)
 {
         
-        FILE        *output   = cl;
-        Codeword     codeword = ptr;
+        FILE     *output   = cl;
+        Codeword  codeword = ptr;
         
         assert(uarray2 != NULL);
         assert(output != NULL);
@@ -151,6 +161,7 @@ static void writeData(int col, int row, A2Methods_UArray2 uarray2,
         int      numBytes = getNumBytes();
         int      byteSize = sizeof(char);
 
+        /* Reversed to do big-endian order */
         for (int byte = numBytes - 1; byte >= 0; byte--) {
                 
                 unsigned int currByte = (unsigned int)Bitpack_getu(

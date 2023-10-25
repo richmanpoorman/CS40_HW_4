@@ -51,12 +51,11 @@ static void compress(Pnm_ppm image)
 
         A2Methods_T methods = uarray2_methods_plain;
 
-        A2Methods_UArray2 pixels      = image -> pixels;
-
+        A2Methods_UArray2 pixels   = image -> pixels;
         assert (pixels != NULL);
-
-        int               size        = sizeof(struct Dct_int);
-        A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        int               size     = sizeof(struct Dct_int);
+        A2Methods_UArray2 newImage = methods -> new(width, height, size);
+        assert(newImage != NULL);
         
         methods -> map_row_major(newImage, quantize, pixels);
         methods -> free(&pixels);
@@ -81,18 +80,22 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
 {
         A2Methods_T       methods = uarray2_methods_plain;
         A2Methods_UArray2 pixels  = cl;
-        Dct_float         data    = methods -> at(pixels, col, row);
 
-        Dct_int inNewImage = ptr;
-        float     a        = data -> a;
-        float     b        = data -> b;
-        float     c        = data -> c;
-        float     d        = data -> d;
-        float     pb       = data -> pb;
-        float     pr       = data -> pr;
+        assert(uarray2 != NULL);
+        assert(pixels != NULL);
 
+        Dct_float data       = methods -> at(pixels, col, row);
+        Dct_int   inNewImage = ptr;
+        assert(data != NULL);
+        assert(inNewImage != NULL);
 
-        
+        float a  = data -> a;
+        float b  = data -> b;
+        float c  = data -> c;
+        float d  = data -> d;
+        float pb = data -> pb;
+        float pr = data -> pr;
+
         struct Dct_int newPixel = {
                 aToBits(a), 
                 bcdToBits(b, getBMaxValue()),
@@ -102,7 +105,6 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
                 Arith40_index_of_chroma(pr)
         };
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 /*
@@ -116,7 +118,7 @@ static void quantize(int col, int row, A2Methods_UArray2 uarray2,
 static int bcdToBits(float x, int maxInt)
 {
         x = clampToRange(x, -maxFloat, maxFloat);
-        int   result   = floatToInt(x, maxInt, -maxInt, maxInt);
+        int result = floatToInt(x, maxInt, -maxInt, maxInt);
 
         return result;
 }
@@ -160,6 +162,7 @@ static void decompress(Pnm_ppm image)
         assert(pixels != NULL);
         int               size        = sizeof(struct Dct_float);
         A2Methods_UArray2 newImage    = methods -> new(width, height, size);
+        assert(newImage != NULL);
 
         methods -> map_row_major(newImage, dequantize, pixels);
         methods -> free(&pixels);
@@ -191,16 +194,15 @@ static void dequantize(int col, int row, A2Methods_UArray2 uarray2,
 
         Dct_int   data       = methods -> at(pixels, col, row);
         Dct_float inNewImage = ptr;
-
         assert(data != NULL);
-
+        assert(inNewImage != NULL);
         
-        int     a          = data -> a;
-        int     b          = data -> b;
-        int     c          = data -> c;
-        int     d          = data -> d;
-        int     pb         = data -> pb;
-        int     pr         = data -> pr;
+        int a  = data -> a;
+        int b  = data -> b;
+        int c  = data -> c;
+        int d  = data -> d;
+        int pb = data -> pb;
+        int pr = data -> pr;
 
         struct Dct_float newPixel = {
                 aToFloat(a),  

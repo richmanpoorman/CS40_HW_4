@@ -135,7 +135,6 @@ static void cieToDct(int col, int row, A2Methods_UArray2 uarray2,
         };
 
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 
@@ -245,7 +244,6 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
         };
 
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 

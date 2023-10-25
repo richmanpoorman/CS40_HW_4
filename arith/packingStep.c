@@ -122,7 +122,6 @@ static void pack(int col, int row, A2Methods_UArray2 uarray2,
                 word
         };
         *inNewImage = newPixel;
-        (void) uarray2;
 }
 
 /*
@@ -215,7 +214,6 @@ static void unpack(int col, int row, A2Methods_UArray2 uarray2,
                 pr
         };
         *inNewImage = newPixel;
-        (void) uarray2;
 
 }
 

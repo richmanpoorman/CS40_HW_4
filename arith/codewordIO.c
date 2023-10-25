@@ -105,7 +105,6 @@ static void readData(int col, int row, A2Methods_UArray2 uarray2,
         *codeword = newPixel;
         (void) col;
         (void) row;
-        (void) uarray2;
 
 }
 
@@ -172,6 +171,5 @@ static void writeData(int col, int row, A2Methods_UArray2 uarray2,
 
         (void) col;
         (void) row;
-        (void) uarray2;
 
 }

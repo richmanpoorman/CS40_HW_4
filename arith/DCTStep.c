@@ -48,8 +48,6 @@ static void compress(Pnm_ppm image)
         assert(pixels != NULL);
         int               size     = sizeof(struct Dct_float);
         A2Methods_UArray2 newImage = methods -> new(newWidth, newHeight, size);
-        
-        assert(image    != NULL);
         assert(newImage != NULL);
 
         methods -> map_row_major(newImage, cieToDct, pixels);
@@ -77,13 +75,14 @@ static void compress(Pnm_ppm image)
 static void cieToDct(int col, int row, A2Methods_UArray2 uarray2, 
                      A2Methods_Object *ptr, void *cl)
 {
-        A2Methods_T       methods    = uarray2_methods_plain;
-        A2Methods_UArray2 pixels     = cl;
+        A2Methods_T       methods = uarray2_methods_plain;
+        A2Methods_UArray2 pixels  = cl;
 
         assert(uarray2 != NULL);
         assert(pixels != NULL);
 
-        Dct_float         inNewImage = ptr;
+        Dct_float inNewImage = ptr;
+        assert(inNewImage != NULL);
 
         int oldCol = col * 2;
         int oldRow = row * 2;
@@ -169,8 +168,6 @@ static void decompress(Pnm_ppm image)
         assert(pixels != NULL);
         int               size     = sizeof(struct Cie_float);
         A2Methods_UArray2 newImage = methods -> new(newWidth, newHeight, size);
-
-        assert(image    != NULL);
         assert(newImage != NULL);
 
         methods -> map_row_major(newImage, dctToCie, pixels);
@@ -204,6 +201,7 @@ static void dctToCie(int col, int row, A2Methods_UArray2 uarray2,
 
         assert(uarray2 != NULL);
         assert(pixels != NULL);
+        assert(inNewImage != NULL);
 
         int oldCol = col / 2;
         int oldRow = row / 2;

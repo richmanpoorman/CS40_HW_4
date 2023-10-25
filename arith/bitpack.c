@@ -208,7 +208,7 @@ uint64_t Bitpack_newu(uint64_t word, unsigned width,
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
 
-        if (Bitpack_fitsu(value, width) == false) {
+        if (!Bitpack_fitsu(value, width)) {
                 RAISE(Bitpack_Overflow);
         }
 
@@ -290,7 +290,7 @@ uint64_t Bitpack_news(uint64_t word, unsigned width,
         assert(lsb <= MAX_WIDTH);
         assert(width + lsb <= MAX_WIDTH);
         
-        if (Bitpack_fitss(value, width) == false) {
+        if (!Bitpack_fitss(value, width) == false) {
                 RAISE(Bitpack_Overflow);
         }
 
